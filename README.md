@@ -1,12 +1,20 @@
-# Hi there, I'm Kiran AB 👋
+<div align="center">
 
-### **Software Engineer (Full-Stack & Cloud Systems)**
-📍 Bengaluru, India | 📧 [Kiran.28sep@gmail.com](mailto:Kiran.28sep@gmail.com) | 📱 +91 9738000271  
-🔗 [LinkedIn](https://www.linkedin.com/in/kiran-a-b-62ba6154/) | 🌐 [GitHub](https://github.com/KiranAB2809) | 📄 [Download PDF Resume](./Kiran_AB_Resume.pdf)
+# ⚡ Kiran AB
+### **Software Engineer | Full-Stack & Cloud Systems Architect**
+*Building High-Throughput Distributed Microservices & Enterprise Banking Systems*
+
+[![GitHub Views](https://komarev.com/ghpvc/?username=KiranAB2809&color=blueviolet&style=flat-square)](https://github.com/KiranAB2809)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/kiran-a-b-62ba6154/)
+[![Email](https://img.shields.io/badge/Email-Contact%20Me-EA4335?style=flat-square&logo=gmail)](mailto:Kiran.28sep@gmail.com)
+[![PDF Resume](https://img.shields.io/badge/Resume-Download%20PDF-0071E3?style=flat-square&logo=adobeacrobatreader)](./Kiran_AB_Resume.pdf)
+[![Live Web Resume](https://img.shields.io/badge/Live%20Resume-Interactive%20Web-2997FF?style=flat-square&logo=googlechrome)](https://kiranab2809.github.io/KiranAB2809/)
 
 ---
 
-## 🚀 About Me
+</div>
+
+## 👨‍💻 Executive Summary
 
 Accomplished **Software Engineer** with **9+ years of experience** designing, architecting, and building mission-critical core banking systems and global enterprise applications. 
 
@@ -15,6 +23,17 @@ Specialized in **Java Spring Boot microservices, Apache Kafka event-driven archi
 ---
 
 ## 🛠️ Tech Stack & Ecosystem
+
+```text
+Backend         :: Java 8/11/17 | Spring Boot | Spring Cloud | RESTful APIs | C# .NET
+Event Streaming :: Apache Kafka | Event-Driven Architecture | Pub/Sub
+Cloud & DevOps  :: AWS (EKS, EC2, S3) | Red Hat OpenShift | Docker | Kubernetes | Jenkins CI/CD
+Databases       :: PostgreSQL | SQL Server | Query Caching & Schema Design
+Frontend        :: ReactJS | Angular (v4+) | TypeScript | JavaScript (ES6+) | HTML5 / CSS3
+Processes       :: SAFe / Agile Scrum | Code Reviews | Technical Mentorship
+```
+
+<div align="center">
 
 ![Java](https://img.shields.io/badge/Java_17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
@@ -25,53 +44,45 @@ Specialized in **Java Spring Boot microservices, Apache Kafka event-driven archi
 ![OpenShift](https://img.shields.io/badge/RedHat_OpenShift-EE0000?style=for-the-badge&logo=redhat&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white)
 
-| Category | Technologies & Tools |
-| :--- | :--- |
-| **Backend Frameworks** | Java (8/11/17), Spring Boot, Spring Cloud, RESTful APIs, JPA / Hibernate, C# .NET MVC |
-| **Event Streaming & DB** | Apache Kafka, Event-Driven Architecture, PostgreSQL, SQL Server |
-| **Cloud & DevOps** | AWS (EKS, EC2, S3), Red Hat OpenShift, Docker, Kubernetes, Jenkins CI/CD, Git |
-| **Frontend & UI/UX** | ReactJS, Angular (v4+), TypeScript, JavaScript (ES6+), HTML5/CSS3 |
-| **Engineering & Process**| System Architecture, Code Reviews, Developer Mentorship, SAFe, Agile Scrum |
+</div>
 
 ---
 
 ## 📈 Impact Highlights
 
 ```text
-⚡ 40% Latency Reduction     : Optimizing query caching and microservices data pipelines.
-🔄 10,000+ Daily Transactions : Scaling ORION Core Banking platform across institutional clients.
-👥 10+ Squad Collaboration   : Mentoring developers & maintaining technical design standards.
-🏆 4 Enterprise Awards        : Volvo IT Star Award, SPOT Awards, & 2x Hackathon Runner-Up.
+⚡ 40% Latency Optimization : Re-engineering microservices data pipelines & caching mechanisms.
+🔄 10,000+ Daily Hits       : Processing high-frequency transactions for ANZ Core Banking.
+👥 10+ Squad Mentorship      : Guiding developers, establishing standards & technical design.
+🏆 4 Enterprise Awards       : Volvo IT Star Award, SPOT Awards, & 2x Hackathon Runner-Up.
 ```
 
 ---
 
 ## 💼 Professional Experience
 
-### **Software Engineer** | ANZ Operations & Technology
+### **Software Engineer** | **ANZ Operations & Technology**
 *Nov 2020 – Present | Bengaluru, India (5+ Years)*  
-*Division: Institutional Banking — Core Banking Modernization*
+*Division: Institutional Banking — Core Banking Modernization & Distributed Systems*
 
-- 🏗️ **ORION Core Banking Refactoring:** Led the architectural refactoring of ANZ's flagship institutional banking platform from legacy codebases into modular, high-availability Spring Boot microservices on AWS & OpenShift.
-- ⚡ **Event Streaming at Scale:** Built an event-driven transaction processing system using **Apache Kafka**, processing **10,000+ daily payload hits** with 99.99% system reliability.
-- 🚀 **Performance Optimization:** Reduced system response times by **40%** through microservices optimization, caching layer implementation, and SQL query tuning.
-- 👨‍💻 **Engineering Collaboration:** Guiding and mentoring junior developers within a squad of **10+ engineers and designers**, contributing to technical design, and maintaining core banking standards.
-- 🌐 **Full-Stack Integration:** Built responsive banking UI portals with **ReactJS** and containerized services deployed to **AWS EKS**.
-- ⭐ **Reference Architecture:** Standardized ORION's microservices architecture as the baseline blueprint for upcoming core banking modernization projects across ANZ.
+- 🏗️ **ORION Core Banking Refactoring:** Spearheaded end-to-end refactoring of ANZ's flagship institutional core banking system from legacy monolith components into high-availability Java Spring Boot microservices on AWS and OpenShift.
+- ⚡ **Event Streaming at Scale:** Designed an event-driven architecture using **Apache Kafka**, processing **10,000+ daily payload hits** with 99.99% system reliability.
+- 🚀 **Performance Optimization:** Accomplished a **40% reduction in system response latency** through query caching, indexing, and microservices decomposition.
+- 👨‍💻 **Engineering Collaboration:** Guiding and mentoring junior developers within a squad of **10+ engineers and designers**, contributing to technical design, and enforcing core banking standards.
+- ⭐ **Reference Architecture:** Standardized ORION's microservices architecture as the blueprint across ANZ Institutional Banking for subsequent cloud modernization initiatives.
 
 ---
 
-### **Software Engineer** | Volvo Group India Pvt. Ltd.
+### **Software Engineer** | **Volvo Group India Pvt. Ltd.**
 *Nov 2016 – Nov 2020 | Bengaluru, India (4 Years)*  
 *Division: Global IT Operations — Aftermarket Systems & Telematics Integration*
 
-- 🛠️ **NAMS (Aftermarket Service Integration System):** Architected centralized integration platform (NIC) using **ReactJS, C# MVC API, Docker, and OpenShift** for real-time monitoring and alert automation.
-- 🚛 **VDA+ (Vehicle Data Administration):** Developed central vehicle data administration platform providing unified read/write telemetry across **Volvo Trucks, Volvo Buses, and Mack Trucks**.
+- 🛠️ **NAMS (Aftermarket Integration Center):** Architected centralized integration hub (NIC) using **ReactJS, C# MVC API, Docker, and OpenShift** for real-time monitoring and alert automation.
+- 🚛 **VDA+ (Vehicle Data Administration):** Developed central vehicle data administration platform providing unified read/write access across **Volvo Trucks, Volvo Buses, and Mack Trucks**.
 - 🏆 **Awards & Achievements:**
-  - 🌟 **Volvo IT Star Award** for technical innovation and engineering excellence.
-  - 🏅 Multiple **SPOT Awards** for dedicated delivery of mission-critical systems.
+  - 🌟 **Volvo IT Star Award** for technical innovation.
+  - 🏅 Multiple **SPOT Awards** for engineering excellence.
   - 🥈 **Runners-Up in Hackathon 2017 & 2018** (Volvo IT Ignite).
 
 ---
@@ -79,9 +90,9 @@ Specialized in **Java Spring Boot microservices, Apache Kafka event-driven archi
 ## 🏛️ Key Projects Overview
 
 <details>
-<summary><b>1. ORION — Core Banking Application Transformation (ANZ)</b></summary>
+<summary><b>1. ORION — Core Banking Transformation (ANZ)</b></summary>
 
-- **Tech Stack:** ReactJS, Java Spring Boot, AWS, OpenShift, Apache Kafka, PostgreSQL
+- **Tech Stack:** ReactJS, Java Spring Boot, AWS EKS, OpenShift, Apache Kafka, PostgreSQL
 - **Key Impact:** Modernized core institutional banking workflows, implemented Kafka transaction streaming for 10,000+ daily hits, cut latency by 40%, and established reference microservices architecture.
 </details>
 
@@ -101,23 +112,19 @@ Specialized in **Java Spring Boot microservices, Apache Kafka event-driven archi
 
 ---
 
-## 🎓 Education
+## 🎓 Education & Qualifications
 
 - 🎓 **Bachelor of Engineering (B.E.) in Information Science & Engineering**  
   *Acharya Institute of Technology, VTU | 2016* (Aggregate: 72.4%)
-- 🏫 **Pre-University Course (PUC) - Computer Science**  
+- 🏫 **Pre-University Course (PUC) - Computer Science Major**  
   *St. Joseph's PU College | 2012* (Aggregate: 80.4%)
 - 🏫 **Secondary School Leaving Certificate (SSLC)**  
   *St. Ann's High School | 2010* (Aggregate: 72.7%)
 
 ---
 
-## 🌐 Languages & Personal Profile
+<div align="center">
 
-- 🗣️ **Languages:** English (Fluent), Kannada (Native), Telugu (Fluent)
-- 💡 **Domain Focus:** Institutional Core Banking, Global Aftermarket & Telematics Systems
-- 📷 **Interests:** Technology Innovation, Photography, Travel
+*📄 Download PDF Resume: [`Kiran_AB_Resume.pdf`](./Kiran_AB_Resume.pdf) | 🌐 Web Resume: [`https://kiranab2809.github.io/KiranAB2809/`](https://kiranab2809.github.io/KiranAB2809/)*
 
----
-
-*Easily updated using `resume.html` and compiled via `generate_pdf.ps1`.*
+</div>
