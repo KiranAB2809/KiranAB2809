@@ -1,7 +1,7 @@
 <div align="center">
 
 # ⚡ Kiran AB
-### **Software Engineer | Full-Stack & Cloud Systems Architect**
+### **Software Engineer**
 *Building High-Throughput Distributed Microservices & Enterprise Banking Systems*
 
 [![GitHub Views](https://komarev.com/ghpvc/?username=KiranAB2809&color=blueviolet&style=flat-square)](https://github.com/KiranAB2809)
