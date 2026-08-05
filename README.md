@@ -1,6 +1,6 @@
 # Hi there, I'm Kiran AB 👋
 
-### **Software Engineer **
+### **Software Engineer**
 📍 Bengaluru, India | 📧 [Kiran.28sep@gmail.com](mailto:Kiran.28sep@gmail.com) | 📱 +91 9738000271  
 🔗 [LinkedIn](https://www.linkedin.com/in/kiran-a-b-62ba6154/) | 🌐 [GitHub](https://github.com/KiranAB2809) | 📄 [Download PDF Resume](./Kiran_AB_Resume.pdf)
 
