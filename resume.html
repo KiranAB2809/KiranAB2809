@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiran AB - Software Engineer Resume</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      line-height: 1.45;
+      font-size: 9.5pt;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+    }
+
+    /* Header Styling */
+    .header {
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left h1 {
+      font-size: 22pt;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .header-left .subtitle {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #2563eb;
+      margin-top: 2px;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+
+    .contact-item {
+      margin-bottom: 2px;
+    }
+
+    .contact-item a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* Section Styling */
+    .section {
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 3px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 14px;
+      background-color: #2563eb;
+      margin-right: 6px;
+      border-radius: 2px;
+    }
+
+    /* Summary */
+    .summary-text {
+      color: #334155;
+      font-size: 9.5pt;
+      text-align: justify;
+    }
+
+    /* Technical Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 16px;
+    }
+
+    .skill-category {
+      font-size: 9pt;
+    }
+
+    .skill-category strong {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .skill-list {
+      color: #475569;
+    }
+
+    /* Experience & Projects */
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+
+    .job-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .job-title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .company-name {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    .job-date-location {
+      font-size: 8.5pt;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .job-subtitle {
+      font-size: 8.5pt;
+      font-style: italic;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+
+    .bullet-list {
+      list-style-type: square;
+      padding-left: 16px;
+      color: #334155;
+    }
+
+    .bullet-list li {
+      margin-bottom: 4px;
+      font-size: 9pt;
+      line-height: 1.4;
+    }
+
+    .bullet-list li strong {
+      color: #0f172a;
+    }
+
+    /* Highlights & Badges */
+    .tech-stack-tag {
+      display: inline-block;
+      background-color: #f1f5f9;
+      color: #334155;
+      font-size: 7.5pt;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      border: 1px solid #e2e8f0;
+      margin-right: 3px;
+    }
+
+    .project-card {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .project-card:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .project-title {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .project-meta {
+      font-size: 8pt;
+      color: #64748b;
+      margin-bottom: 3px;
+    }
+
+    /* Education & Personal */
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .edu-item {
+      background: #f8fafc;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #2563eb;
+    }
+
+    .edu-degree {
+      font-weight: 700;
+      font-size: 8.5pt;
+      color: #0f172a;
+    }
+
+    .edu-inst {
+      font-size: 8pt;
+      color: #475569;
+    }
+
+    .edu-score {
+      font-size: 8pt;
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    .personal-flex {
+      display: flex;
+      gap: 20px;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+
+    /* Page break optimization */
+    .page-break {
+      page-break-before: always;
+    }
+
+    @media print {
+      body {
+        background: none;
+      }
+      .container {
+        width: 100%;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>KIRAN AB</h1>
+        <div class="subtitle">Software Engineer</div>
+      </div>
+      <div class="header-right">
+        <div class="contact-item"><strong>Location:</strong> Bengaluru, Karnataka, India</div>
+        <div class="contact-item"><strong>Phone:</strong> +91 9738000271 | <strong>Email:</strong> <a href="mailto:Kiran.28sep@gmail.com">Kiran.28sep@gmail.com</a></div>
+        <div class="contact-item"><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/kiran-a-b-62ba6154/">linkedin.com/in/kiran-a-b-62ba6154</a></div>
+        <div class="contact-item"><strong>GitHub:</strong> <a href="https://github.com/KiranAB2809">github.com/KiranAB2809</a></div>
+      </div>
+    </header>
+
+    <!-- Professional Summary -->
+    <section class="section">
+      <h2 class="section-title">Executive Summary</h2>
+      <p class="summary-text">
+        Accomplished <strong>Software Engineer</strong> with <strong>9+ years of experience</strong> engineering high-throughput distributed backend microservices, core banking platforms, and enterprise applications. Specialized in <strong>Java Spring Boot, Apache Kafka, AWS, OpenShift, and ReactJS</strong>. Proven track record of collaborating across teams of <strong>10+ engineers</strong>, modernizing legacy architectures, and building event-driven systems handling <strong>10,000+ daily high-stakes transactions</strong> with <strong>40% latency reduction</strong>. Expert in SAFe/Agile delivery, cloud-native deployments, CI/CD pipeline automation, and technical mentorship.
+      </p>
+    </section>
+
+    <!-- Technical Skills -->
+    <section class="section">
+      <h2 class="section-title">Technical Expertise</h2>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <strong>Backend & Architecture:</strong> <span class="skill-list">Java 8/11/17, Spring Boot, Spring Cloud, RESTful APIs, JPA/Hibernate, C# .NET MVC, Microservices, Event-Driven Architecture</span>
+        </div>
+        <div class="skill-category">
+          <strong>Event Streaming & Databases:</strong> <span class="skill-list">Apache Kafka, Event-Driven Patterns, PostgreSQL, SQL Server, Schema Design & Index Tuning</span>
+        </div>
+        <div class="skill-category">
+          <strong>Cloud & DevOps Infrastructure:</strong> <span class="skill-list">AWS (EKS, EC2, S3), Red Hat OpenShift, Docker, Kubernetes, Jenkins CI/CD, Git, SAFe / Agile Scrum</span>
+        </div>
+        <div class="skill-category">
+          <strong>Frontend & UI/UX:</strong> <span class="skill-list">ReactJS, Angular (v4+), TypeScript, JavaScript (ES6+), HTML5, CSS3, Responsive Web Architecture</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="section">
+      <h2 class="section-title">Professional Experience</h2>
+
+      <!-- ANZ -->
+      <div class="job-card" style="margin-bottom: 10px;">
+        <div class="job-header">
+          <div class="job-title-group">
+            <span class="job-title">Software Engineer</span>
+            <span>|</span>
+            <span class="company-name">ANZ Operations and Technology</span>
+          </div>
+          <div class="job-date-location">Nov 2020 – Present | Bengaluru</div>
+        </div>
+        <div class="job-subtitle">Institutional Banking Division — Core Banking Modernization & Distributed Systems</div>
+        <ul class="bullet-list">
+          <li><strong>Architectural Modernization:</strong> Spearheaded end-to-end refactoring of <strong>ORION</strong>, ANZ's flagship core institutional banking application, migrating legacy monolith components into high-availability Java Spring Boot microservices deployed on AWS and OpenShift.</li>
+          <li><strong>Event Streaming & Scale:</strong> Designed and implemented an event-driven architecture using <strong>Apache Kafka</strong> to process <strong>10,000+ daily financial transaction hits</strong> across internal subsystems and external stakeholders with 99.99% reliability.</li>
+          <li><strong>Performance Optimization:</strong> Re-engineered data pipelines and query caching mechanisms, accomplishing a <strong>40% reduction in system response latency</strong> and drastically elevating user experience for Institutional Bankers.</li>
+          <li><strong>Engineering Collaboration & Mentorship:</strong> Guiding and mentoring junior developers within a squad of <strong>10+ engineers and designers</strong>; contributing to technical design, conducting code reviews, and maintaining core banking architecture standards.</li>
+          <li><strong>Full-Stack & Cloud Integration:</strong> Architected responsive enterprise portals using <strong>ReactJS</strong> and orchestrated containerized deployments leveraging <strong>AWS (EKS, EC2, S3)</strong> and automated <strong>Jenkins CI/CD</strong> pipelines.</li>
+          <li><strong>Standard Setting:</strong> Established the ORION refactored architecture as the reference blueprint across ANZ Institutional Banking for subsequent microservices initiatives.</li>
+        </ul>
+      </div>
+
+      <!-- VOLVO -->
+      <div class="job-card">
+        <div class="job-header">
+          <div class="job-title-group">
+            <span class="job-title">Software Engineer</span>
+            <span>|</span>
+            <span class="company-name">Volvo Group India Pvt. Ltd.</span>
+          </div>
+          <div class="job-date-location">Nov 2016 – Nov 2020 | Bengaluru</div>
+        </div>
+        <div class="job-subtitle">Global IT Operations — Aftermarket Systems & Telematics Integration</div>
+        <ul class="bullet-list">
+          <li><strong>Aftermarket Integration (NAMS):</strong> Architected and delivered NAMS (New After Market Service Integration System) using <strong>ReactJS, C# MVC API, Docker, and OpenShift</strong>, enabling real-time monitoring and alerting for subsystem operations.</li>
+          <li><strong>Enterprise Vehicle Data Platform (VDA+):</strong> Developed central vehicle data administration modules providing unified read/write access across <strong>Volvo Trucks, Volvo Buses, and Mack Trucks</strong> globally using Angular 4 and C# MVC.</li>
+          <li><strong>API & Frontend Integration:</strong> Designed reusable component libraries and robust RESTful APIs, securing high uptime and smooth data integration across heterogeneous backend legacy databases.</li>
+          <li><strong>Honours & Recognition:</strong> Conferred with the prestigious <strong>Volvo IT Star Award</strong> and multiple <strong>SPOT Awards</strong> for technical innovation. Secured <strong>Runners-Up position</strong> in Volvo IT Ignite Hackathons (2017 & 2018).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Key Projects Breakdown -->
+    <section class="section">
+      <h2 class="section-title">Key Engineering Projects</h2>
+
+      <div class="project-card">
+        <div class="job-header">
+          <span class="project-title">ORION — Core Banking Transformation (ANZ)</span>
+          <span class="job-date-location">ReactJS, Spring Boot, AWS, OpenShift, Kafka, PostgreSQL</span>
+        </div>
+        <p class="summary-text" style="font-size: 8.5pt; margin-top: 2px;">
+          Pivotal core banking system powering institutional banking workflows. Contributed to core architecture design, Kafka event-driven decoupling, containerized deployments, and microservices decomposition. Handled 10,000+ daily payload executions with zero data loss.
+        </p>
+      </div>
+
+      <div class="project-card">
+        <div class="job-header">
+          <span class="project-title">NAMS — After Market Integration Center (Volvo)</span>
+          <span class="job-date-location">ReactJS, C# MVC API, Docker, OpenShift</span>
+        </div>
+        <p class="summary-text" style="font-size: 8.5pt; margin-top: 2px;">
+          Centralized integration hub for global Volvo aftermarket operations (NIC). Implemented real-time dashboard monitoring, subsystem error tracking, automated alert triggers, and containerized cloud deployment.
+        </p>
+      </div>
+
+      <div class="project-card">
+        <div class="job-header">
+          <span class="project-title">VDA+ — Unified Vehicle Data Administration (Volvo)</span>
+          <span class="job-date-location">Angular 4, TypeScript, C# MVC API, SQL Server</span>
+        </div>
+        <p class="summary-text" style="font-size: 8.5pt; margin-top: 2px;">
+          Mission-critical centralized platform managing vehicle telemetry and card generation across Volvo Trucks, Volvo Buses, and Mack Trucks. Built robust UI models, complex API endpoints, and stakeholder reporting features.
+        </p>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section class="section">
+      <h2 class="section-title">Education & Qualifications</h2>
+      <div class="edu-grid">
+        <div class="edu-item">
+          <div class="edu-degree">Bachelor of Engineering (B.E.)</div>
+          <div class="edu-inst">Information Science & Engineering</div>
+          <div class="edu-inst">Acharya Institute of Tech (VTU) | 2016</div>
+          <div class="edu-score">Aggregate: 72.4%</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">Pre-University Course (PUC)</div>
+          <div class="edu-inst">Computer Science Major</div>
+          <div class="edu-inst">St. Joseph's PU College | 2012</div>
+          <div class="edu-score">Aggregate: 80.4%</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">SSLC (Secondary School)</div>
+          <div class="edu-inst">State PU Board, Karnataka</div>
+          <div class="edu-inst">St. Ann's High School | 2010</div>
+          <div class="edu-score">Aggregate: 72.7%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Personal & Languages -->
+    <section class="section" style="margin-bottom: 0;">
+      <h2 class="section-title">Additional Details</h2>
+      <div class="personal-flex">
+        <div><strong>Languages:</strong> English (Fluent), Kannada (Native), Telugu (Fluent)</div>
+        <div>|</div>
+        <div><strong>Domain Expertise:</strong> Core Institutional Banking, Telematics & Aftermarket Integration</div>
+        <div>|</div>
+        <div><strong>Interests:</strong> Technology Innovation, Photography, Travel</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
