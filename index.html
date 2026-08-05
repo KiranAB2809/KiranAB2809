@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kiran AB - Software Engineer | Executive Interactive Resume</title>
+  <title>Kiran AB - Software Engineer Resume</title>
 
   <!-- Google Fonts & Lucide Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
@@ -17,25 +17,25 @@
       --bg-main: #000000;
       --bg-surface: #0a0a0c;
       --bg-card: rgba(22, 22, 29, 0.7);
-      --bg-card-hover: rgba(32, 32, 42, 0.85);
+      --bg-card-hover: rgba(30, 30, 42, 0.85);
       --border-color: rgba(255, 255, 255, 0.08);
-      --border-highlight: rgba(99, 102, 241, 0.5);
+      --border-highlight: rgba(0, 113, 227, 0.4);
       --text-main: #f5f5f7;
       --text-muted: #86868b;
       --text-dim: #6e6e73;
-      --primary: #6366f1;
-      --primary-gradient: linear-gradient(135deg, #2997ff 0%, #9d4edd 50%, #f72585 100%);
+      --primary: #0071e3;
+      --primary-gradient: linear-gradient(135deg, #2997ff 0%, #7c3aed 100%);
       --apple-blue: #2997ff;
-      --accent-glow: rgba(41, 151, 255, 0.15);
-      --card-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
-      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      --accent-glow: rgba(41, 151, 255, 0.12);
+      --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     [data-theme="light"] {
       --bg-main: #f5f5f7;
       --bg-surface: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.8);
+      --bg-card: rgba(255, 255, 255, 0.85);
       --bg-card-hover: #ffffff;
       --border-color: rgba(0, 0, 0, 0.08);
       --border-highlight: rgba(0, 113, 227, 0.4);
@@ -43,10 +43,10 @@
       --text-muted: #515154;
       --text-dim: #86868b;
       --primary: #0071e3;
-      --primary-gradient: linear-gradient(135deg, #0071e3 0%, #5e5ce6 50%, #d946ef 100%);
+      --primary-gradient: linear-gradient(135deg, #0071e3 0%, #5e5ce6 100%);
       --apple-blue: #0071e3;
       --accent-glow: rgba(0, 113, 227, 0.08);
-      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+      --card-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -63,13 +63,13 @@
       font-family: var(--font-main);
       background-color: var(--bg-main);
       color: var(--text-main);
-      line-height: 1.55;
-      transition: background-color 0.5s var(--ease-apple), color 0.5s var(--ease-apple);
+      line-height: 1.6;
+      transition: background-color 0.4s var(--ease-apple), color 0.4s var(--ease-apple);
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Apple Top Scroll Progress Indicator */
+    /* Top Scroll Progress Indicator */
     .scroll-progress-bar {
       position: fixed;
       top: 0;
@@ -99,36 +99,17 @@
       left: 15%;
       width: 700px;
       height: 700px;
-      background: radial-gradient(circle, rgba(41, 151, 255, 0.14) 0%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(41, 151, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
       border-radius: 50%;
       filter: blur(100px);
-      animation: float-apple 20s infinite alternate ease-in-out;
-    }
-
-    .glow-sphere-2 {
-      position: absolute;
-      bottom: 5%;
-      right: 5%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(157, 78, 221, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
-      border-radius: 50%;
-      filter: blur(100px);
-      animation: float-apple 16s infinite alternate-reverse ease-in-out;
-    }
-
-    @keyframes float-apple {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(30px, -40px) scale(1.08); }
-      100% { transform: translate(-30px, 30px) scale(0.94); }
     }
 
     .app-wrapper {
       position: relative;
       z-index: 1;
-      max-width: 1040px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 24px 28px 100px 28px;
+      padding: 24px 24px 80px 24px;
     }
 
     /* Apple-Style Navigation Bar */
@@ -140,26 +121,24 @@
       justify-content: space-between;
       align-items: center;
       padding: 14px 28px;
-      background: rgba(15, 15, 20, 0.65);
+      background: rgba(15, 15, 20, 0.7);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border: 1px solid var(--border-color);
       border-radius: 20px;
       margin-bottom: 36px;
       box-shadow: var(--card-shadow);
-      transition: all 0.4s var(--ease-apple);
+      transition: all 0.3s var(--ease-apple);
     }
 
     [data-theme="light"] .nav-bar {
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.8);
     }
 
     .nav-logo {
       font-weight: 800;
       font-size: 1.25rem;
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-main);
       letter-spacing: -0.5px;
       text-decoration: none;
     }
@@ -175,13 +154,12 @@
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 500;
-      transition: color 0.3s var(--ease-apple), transform 0.3s var(--ease-apple);
+      transition: color 0.2s var(--ease-apple);
       display: inline-block;
     }
 
     .nav-link:hover {
       color: var(--text-main);
-      transform: translateY(-1px);
     }
 
     .nav-actions {
@@ -201,18 +179,17 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s var(--ease-apple);
+      transition: all 0.2s var(--ease-apple);
     }
 
     .btn-icon:hover {
       background: var(--apple-blue);
       color: #ffffff;
       border-color: var(--apple-blue);
-      transform: scale(1.06);
     }
 
     .btn-primary {
-      background: var(--primary-gradient);
+      background: var(--apple-blue);
       color: #ffffff;
       border: none;
       padding: 10px 20px;
@@ -223,34 +200,41 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 8px 24px rgba(41, 151, 255, 0.3);
-      transition: all 0.3s var(--ease-apple);
+      box-shadow: 0 4px 14px rgba(41, 151, 255, 0.3);
+      transition: all 0.2s var(--ease-apple);
       text-decoration: none;
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 12px 30px rgba(41, 151, 255, 0.5);
+      background: #0077ed;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(41, 151, 255, 0.4);
     }
 
-    /* Hero Glass Card (3D Tilt Effect Container) */
-    .tilt-container {
-      perspective: 1000px;
-      margin-bottom: 36px;
-    }
-
+    /* Professional Executive Hero Section (Smooth Static Fade-in) */
     .hero-card {
       background: var(--bg-card);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border: 1px solid var(--border-color);
-      border-radius: 28px;
-      padding: 44px;
+      border-radius: 24px;
+      padding: 40px;
+      margin-bottom: 32px;
       box-shadow: var(--card-shadow);
       position: relative;
       overflow: hidden;
-      transition: transform 0.4s var(--ease-apple), border-color 0.4s var(--ease-apple), box-shadow 0.4s var(--ease-apple);
-      transform-style: preserve-3d;
+      animation: heroFadeIn 0.8s var(--ease-apple) forwards;
+    }
+
+    @keyframes heroFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .hero-card::before {
@@ -259,61 +243,29 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
+      height: 3px;
       background: var(--primary-gradient);
     }
 
-    .hero-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
     .hero-title h1 {
-      font-size: 3rem;
+      font-size: 2.8rem;
       font-weight: 800;
-      letter-spacing: -1.5px;
-      margin-bottom: 8px;
-      background: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    [data-theme="light"] .hero-title h1 {
-      background: linear-gradient(180deg, #1d1d1f 0%, #515154 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+      color: var(--text-main);
     }
 
     .hero-subtitle {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: var(--apple-blue);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(41, 151, 255, 0.12);
-      border: 1px solid rgba(41, 151, 255, 0.3);
-      color: var(--apple-blue);
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 600;
+      margin-bottom: 18px;
     }
 
     .summary-box {
       color: var(--text-muted);
-      font-size: 1.06rem;
-      line-height: 1.75;
+      font-size: 1.02rem;
+      line-height: 1.7;
       margin-bottom: 24px;
     }
 
@@ -328,91 +280,86 @@
       align-items: center;
       gap: 8px;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       text-decoration: none;
       padding: 8px 16px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      transition: all 0.3s var(--ease-apple);
+      transition: all 0.2s var(--ease-apple);
       cursor: pointer;
     }
 
     .contact-badge:hover {
       color: var(--text-main);
       border-color: var(--apple-blue);
-      background: rgba(41, 151, 255, 0.1);
-      transform: translateY(-2px) scale(1.03);
+      background: rgba(41, 151, 255, 0.08);
     }
 
-    /* Key Impact Cards Grid */
+    /* Impact Metrics Cards */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      margin-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
     }
 
     .metric-card {
       background: var(--bg-card);
       backdrop-filter: blur(20px);
       border: 1px solid var(--border-color);
-      border-radius: 22px;
-      padding: 24px 20px;
+      border-radius: 20px;
+      padding: 22px 18px;
       text-align: center;
       box-shadow: var(--card-shadow);
-      transition: all 0.4s var(--ease-apple);
-      cursor: default;
+      transition: all 0.3s var(--ease-apple);
     }
 
     .metric-card:hover {
-      transform: translateY(-6px) scale(1.02);
+      transform: translateY(-3px);
       border-color: var(--border-highlight);
-      box-shadow: 0 20px 40px rgba(41, 151, 255, 0.25);
     }
 
     .metric-val {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 800;
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--apple-blue);
       margin-bottom: 4px;
       letter-spacing: -1px;
     }
 
     .metric-label {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-muted);
     }
 
-    /* Section Apple Scroll Reveal Effect */
+    /* Section Scroll Reveal Effect */
     .section-container {
-      margin-bottom: 54px;
+      margin-bottom: 44px;
       opacity: 0;
-      transform: translateY(40px) scale(0.97);
-      transition: opacity 0.8s var(--ease-apple), transform 0.8s var(--ease-apple);
+      transform: translateY(24px);
+      transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple);
     }
 
     .section-container.visible {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
     }
 
     .section-header {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .section-title-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: rgba(41, 151, 255, 0.12);
-      border: 1px solid rgba(41, 151, 255, 0.25);
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: rgba(41, 151, 255, 0.1);
+      border: 1px solid rgba(41, 151, 255, 0.2);
       color: var(--apple-blue);
       display: flex;
       align-items: center;
@@ -420,16 +367,16 @@
     }
 
     .section-title {
-      font-size: 1.55rem;
+      font-size: 1.45rem;
       font-weight: 700;
-      letter-spacing: -0.8px;
+      letter-spacing: -0.6px;
     }
 
-    /* Interactive Skills Grid */
+    /* Skills Grid */
     .skills-filter {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
     }
 
@@ -437,46 +384,44 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: 24px;
-      font-size: 0.85rem;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.84rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s var(--ease-apple);
+      transition: all 0.2s var(--ease-apple);
     }
 
     .filter-btn.active, .filter-btn:hover {
       background: var(--apple-blue);
       color: #ffffff;
       border-color: var(--apple-blue);
-      transform: scale(1.04);
     }
 
     .skills-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
     }
 
     .skill-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 22px;
-      padding: 24px;
-      transition: all 0.4s var(--ease-apple);
+      border-radius: 20px;
+      padding: 22px;
+      transition: all 0.3s var(--ease-apple);
     }
 
     .skill-card:hover {
       border-color: var(--border-highlight);
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: var(--card-shadow);
+      transform: translateY(-2px);
     }
 
     .skill-card-title {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -494,40 +439,38 @@
       color: var(--text-muted);
       font-size: 0.82rem;
       font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 10px;
-      transition: all 0.25s var(--ease-apple);
+      padding: 4px 11px;
+      border-radius: 8px;
+      transition: all 0.2s var(--ease-apple);
       cursor: pointer;
     }
 
     .tag-badge:hover {
-      background: rgba(41, 151, 255, 0.15);
+      background: rgba(41, 151, 255, 0.12);
       color: var(--apple-blue);
       border-color: var(--apple-blue);
-      transform: scale(1.05);
     }
 
     /* Experience Timeline Cards */
     .timeline {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 20px;
     }
 
     .timeline-card {
       background: var(--bg-card);
       backdrop-filter: blur(20px);
       border: 1px solid var(--border-color);
-      border-radius: 24px;
-      padding: 32px;
+      border-radius: 22px;
+      padding: 28px;
       box-shadow: var(--card-shadow);
       position: relative;
-      transition: all 0.4s var(--ease-apple);
+      transition: all 0.3s var(--ease-apple);
     }
 
     .timeline-card:hover {
       border-color: var(--border-highlight);
-      transform: translateY(-2px);
     }
 
     .timeline-header {
@@ -536,11 +479,11 @@
       align-items: flex-start;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .role-title {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text-main);
     }
@@ -551,33 +494,33 @@
     }
 
     .timeline-date {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
       color: var(--text-dim);
       background: rgba(255, 255, 255, 0.05);
-      padding: 4px 14px;
-      border-radius: 14px;
+      padding: 4px 12px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
     }
 
     .role-division {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-style: italic;
       color: var(--text-muted);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .bullet-points {
       list-style-type: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .bullet-points li {
       position: relative;
-      padding-left: 26px;
-      font-size: 0.96rem;
+      padding-left: 24px;
+      font-size: 0.94rem;
       color: var(--text-muted);
       line-height: 1.6;
     }
@@ -588,7 +531,7 @@
       left: 0;
       top: 0;
       color: var(--apple-blue);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
     }
 
@@ -600,19 +543,18 @@
     .project-accordion {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
-      margin-bottom: 14px;
+      border-radius: 18px;
+      margin-bottom: 12px;
       overflow: hidden;
-      transition: all 0.4s var(--ease-apple);
+      transition: all 0.3s var(--ease-apple);
     }
 
     .project-accordion:hover {
       border-color: var(--border-highlight);
-      transform: translateY(-2px);
     }
 
     .accordion-header {
-      padding: 22px 28px;
+      padding: 20px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -623,17 +565,17 @@
     .accordion-title-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .accordion-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
     }
 
     .accordion-toggle-icon {
       color: var(--text-muted);
-      transition: transform 0.4s var(--ease-apple);
+      transition: transform 0.3s var(--ease-apple);
     }
 
     .project-accordion.open .accordion-toggle-icon {
@@ -644,50 +586,50 @@
     .accordion-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.5s var(--ease-apple), padding 0.4s var(--ease-apple);
-      padding: 0 28px;
+      transition: max-height 0.4s var(--ease-apple), padding 0.3s var(--ease-apple);
+      padding: 0 24px;
     }
 
     .project-accordion.open .accordion-content {
       max-height: 500px;
-      padding: 0 28px 24px 28px;
+      padding: 0 24px 20px 24px;
     }
 
     /* Education Grid */
     .edu-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
     }
 
     .edu-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 24px;
-      transition: all 0.4s var(--ease-apple);
+      border-radius: 18px;
+      padding: 22px;
+      transition: all 0.3s var(--ease-apple);
     }
 
     .edu-card:hover {
       border-color: var(--border-highlight);
-      transform: translateY(-4px) scale(1.02);
+      transform: translateY(-2px);
     }
 
     .edu-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       margin-bottom: 4px;
     }
 
     .edu-sub {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .edu-score-badge {
       display: inline-block;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
       color: var(--apple-blue);
       background: rgba(41, 151, 255, 0.12);
@@ -698,22 +640,22 @@
     /* Toast Notification */
     .toast {
       position: fixed;
-      bottom: 32px;
-      right: 32px;
-      background: rgba(20, 20, 28, 0.9);
+      bottom: 30px;
+      right: 30px;
+      background: rgba(20, 20, 28, 0.95);
       backdrop-filter: blur(20px);
       color: #ffffff;
-      padding: 14px 24px;
-      border-radius: 16px;
+      padding: 12px 22px;
+      border-radius: 14px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.92rem;
+      gap: 10px;
+      font-size: 0.9rem;
       font-weight: 500;
       opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.4s var(--ease-apple);
+      transform: translateY(16px);
+      transition: all 0.3s var(--ease-apple);
       z-index: 1000;
       border: 1px solid var(--border-highlight);
     }
@@ -747,7 +689,7 @@
         max-width: 100% !important;
       }
 
-      .tilt-container, .hero-card, .metric-card, .skill-card, .timeline-card, .project-accordion, .edu-card {
+      .hero-card, .metric-card, .skill-card, .timeline-card, .project-accordion, .edu-card {
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
@@ -755,6 +697,7 @@
         margin-bottom: 12px !important;
         backdrop-filter: none !important;
         transform: none !important;
+        animation: none !important;
       }
 
       .hero-card {
@@ -766,8 +709,6 @@
       .hero-title h1 {
         font-size: 22pt !important;
         color: #0f172a !important;
-        background: none !important;
-        -webkit-text-fill-color: initial !important;
       }
 
       .hero-subtitle {
@@ -821,7 +762,6 @@
   <!-- Ambient Glow Effects -->
   <div class="ambient-glow">
     <div class="glow-sphere-1"></div>
-    <div class="glow-sphere-2"></div>
   </div>
 
   <div class="app-wrapper">
@@ -846,48 +786,41 @@
       </div>
     </nav>
 
-    <!-- 3D Interactive Hero Card -->
-    <div class="tilt-container">
-      <header class="hero-card" id="heroCard">
-        <div class="hero-header">
-          <div class="hero-title">
-            <h1>KIRAN AB</h1>
-            <div class="hero-subtitle">
-              Software Engineer
-              <span class="hero-badge"><i data-lucide="sparkles" style="width:14px;"></i> Enterprise & Distributed Systems</span>
-            </div>
-          </div>
-        </div>
+    <!-- Professional Executive Hero Card -->
+    <header class="hero-card" id="summary">
+      <div class="hero-title">
+        <h1>KIRAN AB</h1>
+        <div class="hero-subtitle">Software Engineer</div>
+      </div>
 
-        <p class="summary-box">
-          Accomplished <strong>Software Engineer</strong> with <strong>9+ years of experience</strong> engineering high-throughput distributed backend microservices, core banking platforms, and enterprise applications. Specialized in <strong>Java Spring Boot, Apache Kafka, AWS, OpenShift, and ReactJS</strong>. Proven track record of collaborating across cross-functional teams of <strong>10+ engineers</strong>, modernizing legacy architectures, and building event-driven systems handling <strong>10,000+ daily high-stakes transactions</strong> with <strong>40% latency reduction</strong>.
-        </p>
+      <p class="summary-box">
+        Accomplished <strong>Software Engineer</strong> with <strong>9+ years of experience</strong> engineering high-throughput distributed backend microservices, core banking platforms, and enterprise applications. Specialized in <strong>Java Spring Boot, Apache Kafka, AWS, OpenShift, and ReactJS</strong>. Proven track record of collaborating across cross-functional teams of <strong>10+ engineers</strong>, modernizing legacy architectures, and building event-driven systems handling <strong>10,000+ daily high-stakes transactions</strong> with <strong>40% latency reduction</strong>.
+      </p>
 
-        <div class="hero-contact">
-          <span class="contact-badge" onclick="copyText('Bengaluru, Karnataka, India', 'Location copied to clipboard!')">
-            <i data-lucide="map-pin" style="width:16px;"></i> Bengaluru, India
-          </span>
-          <a class="contact-badge" href="mailto:Kiran.28sep@gmail.com">
-            <i data-lucide="mail" style="width:16px;"></i> Kiran.28sep@gmail.com
-          </a>
-          <span class="contact-badge" onclick="copyText('+919738000271', 'Phone number copied to clipboard!')">
-            <i data-lucide="phone" style="width:16px;"></i> +91 9738000271
-          </span>
-          <a class="contact-badge" href="https://www.linkedin.com/in/kiran-a-b-62ba6154/" target="_blank">
-            <i data-lucide="linkedin" style="width:16px;"></i> LinkedIn Profile
-          </a>
-          <a class="contact-badge" href="https://github.com/KiranAB2809" target="_blank">
-            <i data-lucide="github" style="width:16px;"></i> GitHub Profile
-          </a>
-        </div>
-      </header>
-    </div>
+      <div class="hero-contact">
+        <span class="contact-badge" onclick="copyText('Bengaluru, Karnataka, India', 'Location copied!')">
+          <i data-lucide="map-pin" style="width:16px;"></i> Bengaluru, India
+        </span>
+        <a class="contact-badge" href="mailto:Kiran.28sep@gmail.com">
+          <i data-lucide="mail" style="width:16px;"></i> Kiran.28sep@gmail.com
+        </a>
+        <span class="contact-badge" onclick="copyText('+919738000271', 'Phone number copied!')">
+          <i data-lucide="phone" style="width:16px;"></i> +91 9738000271
+        </span>
+        <a class="contact-badge" href="https://www.linkedin.com/in/kiran-a-b-62ba6154/" target="_blank">
+          <i data-lucide="linkedin" style="width:16px;"></i> LinkedIn Profile
+        </a>
+        <a class="contact-badge" href="https://github.com/KiranAB2809" target="_blank">
+          <i data-lucide="github" style="width:16px;"></i> GitHub Profile
+        </a>
+      </div>
+    </header>
 
     <!-- Key Impact Metrics -->
     <div class="metrics-grid">
       <div class="metric-card">
         <div class="metric-val">9+ Yrs</div>
-        <div class="metric-label">Full-Stack & Cloud Exp.</div>
+        <div class="metric-label">Software Engineering Exp.</div>
       </div>
       <div class="metric-card">
         <div class="metric-val">10,000+</div>
@@ -899,7 +832,7 @@
       </div>
       <div class="metric-card">
         <div class="metric-val">10+ Squad</div>
-        <div class="metric-label">Mentorship & Design</div>
+        <div class="metric-label">Mentorship & Standards</div>
       </div>
     </div>
 
@@ -1127,7 +1060,7 @@
     <span id="toastMsg">Action completed!</span>
   </div>
 
-  <!-- Apple Interactive Scripts -->
+  <!-- Interactive Scripts -->
   <script>
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -1150,19 +1083,6 @@
       htmlEl.setAttribute('data-theme', newTheme);
       themeToggleBtn.innerHTML = newTheme === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
       lucide.createIcons();
-    });
-
-    // 3D Magnetic Card Tilt Effect (Apple Style)
-    const heroCard = document.getElementById('heroCard');
-    heroCard.addEventListener('mousemove', (e) => {
-      const rect = heroCard.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      heroCard.style.transform = `rotateX(${-y / 35}deg) rotateY(${x / 35}deg)`;
-    });
-
-    heroCard.addEventListener('mouseleave', () => {
-      heroCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
     });
 
     // Accordion Toggle Function
@@ -1199,7 +1119,7 @@
       });
     }
 
-    // Apple Scroll Reveal Intersection Observer
+    // Scroll Reveal Intersection Observer
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
