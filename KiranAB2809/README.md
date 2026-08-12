@@ -1,154 +1,130 @@
-# Kiran AB — Portfolio + Auto-Generated Resume
+<div align="center">
 
-A personal portfolio site with an ATS-friendly resume PDF, both generated from a single
-JSON file. Static HTML + vanilla JS. Zero npm dependencies — nothing to `npm install`.
+# ⚡ Kiran AB
+### **Software Engineer**
+*Building High-Throughput Distributed Microservices & Enterprise Banking Systems*
 
-## Quick start
+[![GitHub Views](https://komarev.com/ghpvc/?username=KiranAB2809&color=blueviolet&style=flat-square)](https://github.com/KiranAB2809)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/kiran-a-b-62ba6154/)
+[![Email](https://img.shields.io/badge/Email-Contact%20Me-EA4335?style=flat-square&logo=gmail)](mailto:Kiran.28sep@gmail.com)
+[![PDF Resume](https://img.shields.io/badge/Resume-Download%20PDF-0071E3?style=flat-square&logo=adobeacrobatreader)](./Kiran_AB_Resume.pdf)
+[![Live Web Resume](https://img.shields.io/badge/Live%20Resume-Interactive%20Web-2997FF?style=flat-square&logo=googlechrome)](https://kiranab2809.github.io/KiranAB2809/)
 
-```bash
-npm start
+---
+
+</div>
+
+## 👨‍💻 Executive Summary
+
+Accomplished **Software Engineer** with **9+ years of experience** designing, architecting, and building mission-critical core banking systems and global enterprise applications. 
+
+Specialized in **Java Spring Boot microservices, Apache Kafka event-driven architectures, AWS & OpenShift cloud infrastructure, and ReactJS frontend portals**. Proven track record of collaborating across engineering teams of **10+ developers**, modernizing legacy systems, and scaling applications to handle **10,000+ daily high-stakes financial transactions** with a **40% reduction in response latency**.
+
+---
+
+## 🛠️ Tech Stack & Ecosystem
+
+```text
+Backend         :: Java 8/11/17 | Spring Boot | Spring Cloud | RESTful APIs | C# .NET
+Event Streaming :: Apache Kafka | Event-Driven Architecture | Pub/Sub
+Cloud & DevOps  :: AWS (EKS, EC2, S3) | Red Hat OpenShift | Docker | Kubernetes | Jenkins CI/CD
+Databases       :: PostgreSQL | SQL Server | Query Caching & Schema Design
+Frontend        :: ReactJS | Angular (v4+) | TypeScript | JavaScript (ES6+) | HTML5 / CSS3
+Processes       :: SAFe / Agile Scrum | Code Reviews | Technical Mentorship
 ```
 
-Then open **http://127.0.0.1:5173** in your browser. (Opening `index.html` directly with
-`file://` will not work — the page fetches `data/profile.json`, which browsers block over
-`file://`. The site will show an on-page message telling you this if it happens.)
+<div align="center">
 
-To stop the server, press `Ctrl+C`.
+![Java](https://img.shields.io/badge/Java_17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
+![ReactJS](https://img.shields.io/badge/React_JS-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![OpenShift](https://img.shields.io/badge/RedHat_OpenShift-EE0000?style=for-the-badge&logo=redhat&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
-## The one file you edit: `data/profile.json`
+</div>
 
-Everything on the site and in the resume — your name, roles, experience, projects, skills,
-education, awards — comes from this single file. Edit it, refresh your browser, and the
-site updates. No other file needs to change for content edits.
+---
 
-| `profile.json` key | Controls |
-| --- | --- |
-| `meta.*` | Page title, description, SEO tags, OpenGraph image, theme colors |
-| `profile.name` / `shortName` / `initials` | Hero heading, nav brand, monogram fallback |
-| `profile.roles[]` | The typing-effect role rotator in the hero |
-| `profile.tagline` | One-line sentence under the role |
-| `profile.avatar` | Path to your photo (falls back to a monogram if missing/broken) |
-| `profile.resumeFile` | Path to the generated PDF (download button + `npm run pdf` output) |
-| `profile.availability` | The green pill in the hero |
-| `profile.socials[]` | Icon row in hero, footer, and contact section |
-| `profile.summary[]` | Bullet list in the About section (and resume Profile Summary) |
-| `stats[]` | The four animated counters below the hero |
-| `experience[]` | Career timeline. `highlights` = day-to-day, `achievements` = outcomes shown in the accent panel. `current: true` gives the pulsing dot |
-| `projects[]` | Project cards. `featured: true` adds a badge. `responsibilities` sit behind a "Responsibilities" disclosure |
-| `skillGroups[]` | Skill bars **and** the radar chart (levels are 0–100 estimates — edit freely) |
-| `skillTags[]` | The tag cloud under the radar chart |
-| `otherSkills[]` | Small cards in the About section |
-| `education[]`, `awards[]` | Education & Awards section, and resume sections of the same name |
-| `personal.*` | Details panel in About, and the resume's Personal Details section |
-| `contact.*` | Contact heading/blurb, and whether the phone number is shown |
-| `github.*` | Which GitHub username's repos to show, how many, sort/exclude rules |
-| `resumeOptions.*` | Toggle whether the PDF includes Education / Awards / Personal Details, plus a footer note |
+## 📈 Impact Highlights
 
-## Swapping in your photo
-
-1. Put your photo at `assets/img/avatar-source.jpg` (or `.png`).
-2. Run `npm run avatar`. This crops it, removes the background, and composites it onto a
-   studio-style gradient backdrop matching the site's palette, then saves the result to
-   `assets/img/avatar.jpg`.
-3. If you don't run this step (or the image fails to load for any reason), the hero
-   automatically falls back to a styled monogram of your initials — nothing breaks.
-
-Tuning knobs (crop box, feather radius, tint strength, rim light, color grading) are all
-named constants at the top of `scripts/generate-avatar.mjs`, with comments explaining each.
-
-## Enabling the contact form
-
-The form works out of the box with **no backend**: without a Formspree endpoint configured,
-submitting it opens the visitor's email client with a pre-filled `mailto:` message instead.
-
-To wire up real form submissions:
-
-1. Create a free form at [formspree.io](https://formspree.io) and copy your endpoint URL.
-2. Paste it into `contact.formspreeEndpoint` in `data/profile.json`.
-3. Refresh — the form now POSTs to Formspree, with the `mailto:` behavior kept as an
-   automatic fallback if that request ever fails.
-
-## How the resume PDF is produced
-
-```bash
-npm run pdf
+```text
+⚡ 40% Latency Optimization : Re-engineering microservices data pipelines & caching mechanisms.
+🔄 10,000+ Daily Hits       : Processing high-frequency transactions for ANZ Core Banking.
+👥 10+ Squad Mentorship      : Guiding developers, establishing standards & technical design.
+🏆 4 Enterprise Awards       : Volvo IT Star Award, SPOT Awards, & 2x Hackathon Runner-Up.
 ```
 
-This starts the local server, opens `resume.html` in headless Chrome, and prints it to
-`assets/resume/<name from profile.json>.pdf` — a real, text-selectable, ATS-parseable PDF
-(not an image). Run this again any time you change `profile.json` and want the PDF to match.
+---
 
-If Chrome isn't found automatically, point to it explicitly:
+## 💼 Professional Experience
 
-```bash
-CHROME_PATH="/path/to/chrome" npm run pdf
-```
+### **Software Engineer** | **ANZ Operations & Technology**
+*Nov 2020 – Present | Bengaluru, India (5+ Years)*  
+*Division: Institutional Banking — Core Banking Modernization & Distributed Systems*
 
-## Publishing to GitHub Pages
+- 🏗️ **ORION Core Banking Refactoring:** Spearheaded end-to-end refactoring of ANZ's flagship institutional core banking system from legacy monolith components into high-availability Java Spring Boot microservices on AWS and OpenShift.
+- ⚡ **Event Streaming at Scale:** Designed an event-driven architecture using **Apache Kafka**, processing **10,000+ daily payload hits** with 99.99% system reliability.
+- 🚀 **Performance Optimization:** Accomplished a **40% reduction in system response latency** through query caching, indexing, and microservices decomposition.
+- 👨‍💻 **Engineering Collaboration:** Guiding and mentoring junior developers within a squad of **10+ engineers and designers**, contributing to technical design, and enforcing core banking standards.
+- ⭐ **Reference Architecture:** Standardized ORION's microservices architecture as the blueprint across ANZ Institutional Banking for subsequent cloud modernization initiatives.
 
-1. Create a new GitHub repository and push this project to it:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/<you>/<repo>.git
-   git push -u origin main
-   ```
-2. In the repo, go to **Settings → Pages** and set the source to **GitHub Actions**.
-3. The included workflow (`.github/workflows/deploy.yml`) will regenerate the resume PDF
-   and OG image and deploy automatically on every push to `main`.
+---
 
-**Root domain (`<you>.github.io`)** — if your repo is named exactly `<you>.github.io`, the
-site is served from the domain root and no URLs need to change.
+### **Software Engineer** | **Volvo Group India Pvt. Ltd.**
+*Nov 2016 – Nov 2020 | Bengaluru, India (4 Years)*  
+*Division: Global IT Operations — Aftermarket Systems & Telematics Integration*
 
-**Sub-path (`<you>.github.io/<repo>/`)** — for any other repo name, GitHub serves the site
-under a sub-path. Update `meta.siteUrl` in `data/profile.json` to include that sub-path
-(e.g. `https://you.github.io/portfolio-kiran`), since it's used to build the canonical URL,
-OpenGraph image URL, and sitemap.
+- 🛠️ **NAMS (Aftermarket Integration Center):** Architected centralized integration hub (NIC) using **ReactJS, C# MVC API, Docker, and OpenShift** for real-time monitoring and alert automation.
+- 🚛 **VDA+ (Vehicle Data Administration):** Developed central vehicle data administration platform providing unified read/write access across **Volvo Trucks, Volvo Buses, and Mack Trucks**.
+- 🏆 **Awards & Achievements:**
+  - 🌟 **Volvo IT Star Award** for technical innovation.
+  - 🏅 Multiple **SPOT Awards** for engineering excellence.
+  - 🥈 **Runners-Up in Hackathon 2017 & 2018** (Volvo IT Ignite).
 
-## Customisation
+---
 
-| Want to change… | Edit |
-| --- | --- |
-| Colors / gradient | CSS custom properties at the top of `assets/css/styles.css` (`--grad-1` … `--grad-4`) |
-| Fonts | `--font-sans` / `--font-mono` in the same file |
-| Motion / animation speed | Look for `@keyframes` blocks in `styles.css`; all respect `prefers-reduced-motion` automatically |
-| Section order | Reorder the `<section>` blocks in `index.html` (nav links use `href="#id"` and will still work in any order) |
-| Light/dark default | The inline script in `<head>` of `index.html` — currently follows the OS preference on first visit, then remembers the user's choice |
+## 🏛️ Key Projects Overview
 
-## File tree
+<details>
+<summary><b>1. ORION — Core Banking Transformation (ANZ)</b></summary>
 
-```
-portfolio-kiran/
-├─ index.html                 # portfolio shell (rendered by main.js)
-├─ resume.html                # printable A4 resume shell (rendered by resume.js)
-├─ data/profile.json          # ← the only file you edit for content
-├─ assets/
-│  ├─ css/styles.css          # site theme, layout, components, animation
-│  ├─ css/resume.css          # print-optimized resume styles
-│  ├─ js/main.js              # renders the portfolio from profile.json
-│  ├─ js/resume.js            # renders the resume from profile.json
-│  ├─ img/                    # favicon, avatar, og-image
-│  └─ resume/                 # generated PDF lives here (committed to the repo)
-├─ scripts/
-│  ├─ server.mjs              # zero-dependency static dev server
-│  ├─ chrome.mjs              # headless Chrome/Edge locator + runner
-│  ├─ generate-pdf.mjs        # npm run pdf
-│  ├─ generate-avatar.mjs     # npm run avatar
-│  └─ generate-og.mjs         # npm run og
-├─ .github/workflows/deploy.yml
-├─ robots.txt, sitemap.xml, .nojekyll, .gitignore
-├─ package.json                # scripts only — zero dependencies
-└─ README.md
-```
+- **Tech Stack:** ReactJS, Java Spring Boot, AWS EKS, OpenShift, Apache Kafka, PostgreSQL
+- **Key Impact:** Modernized core institutional banking workflows, implemented Kafka transaction streaming for 10,000+ daily hits, cut latency by 40%, and established reference microservices architecture.
+</details>
 
-## Notes
+<details>
+<summary><b>2. NAMS — New After Market Service Integration System (Volvo)</b></summary>
 
-- `assets/js/main.js` includes a couple of harmless `?debug…` query-param hooks
-  (`debugFlat`, `debugScrollTo`, `debugOpenMenu`, `debugWidth`) used during development to
-  screenshot-test the site in headless Chrome. They do nothing unless you type those exact
-  query params into the URL yourself — safe to leave in, or strip out if you'd rather not
-  carry them.
-- Skill levels in `profile.json` were estimated from resume seniority/prominence — edit the
-  `level` values (0–100) in `skillGroups` to taste.
+- **Tech Stack:** ReactJS, C# MVC API, Docker, OpenShift, REST APIs
+- **Key Impact:** Integrated global Volvo aftermarket operations, implemented subsystem monitoring dashboards, real-time alert engine, and containerized deployment.
+</details>
+
+<details>
+<summary><b>3. VDA+ — Vehicle Data Administration System (Volvo)</b></summary>
+
+- **Tech Stack:** Angular 4, TypeScript, C# MVC API, SQL Server
+- **Key Impact:** Single pane of glass for vehicle telemetry data management across Volvo Trucks, Buses, and Mack Trucks globally with high uptime.
+</details>
+
+---
+
+## 🎓 Education & Qualifications
+
+- 🎓 **Bachelor of Engineering (B.E.) in Information Science & Engineering**  
+  *Acharya Institute of Technology, VTU | 2016* (Aggregate: 72.4%)
+- 🏫 **Pre-University Course (PUC) - Computer Science Major**  
+  *St. Joseph's PU College | 2012* (Aggregate: 80.4%)
+- 🏫 **Secondary School Leaving Certificate (SSLC)**  
+  *St. Ann's High School | 2010* (Aggregate: 72.7%)
+
+---
+
+<div align="center">
+
+*📄 Download PDF Resume: [`Kiran_AB_Resume.pdf`](./Kiran_AB_Resume.pdf) | 🌐 Web Resume: [`https://kiranab2809.github.io/KiranAB2809/`](https://kiranab2809.github.io/KiranAB2809/)*
+
+</div>
