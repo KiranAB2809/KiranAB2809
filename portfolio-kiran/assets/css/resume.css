@@ -1,0 +1,97 @@
+/* ATS-friendly, single-column, text-based resume sheet. */
+@page { size: A4; margin: 15mm 16mm; }
+
+* { box-sizing: border-box; }
+ul { list-style: none; margin: 0; padding: 0; }
+html, body {
+  margin: 0; padding: 0;
+  background: #eef0f4;
+  font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+  color: #1a1a1a;
+}
+a { color: #1a1a1a; text-decoration: none; }
+
+.toolbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: center; gap: 10px;
+  padding: 14px; background: #1a1a2e;
+}
+.toolbar button, .toolbar a {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.08); color: #fff; cursor: pointer;
+  min-height: 40px; display: inline-flex; align-items: center;
+}
+.toolbar button:hover, .toolbar a:hover { background: rgba(255,255,255,.18); }
+.toolbar .primary { background: linear-gradient(120deg,#7c3aed,#ec4899); border: none; }
+
+.sheet {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 24px auto;
+  background: #fff;
+  padding: 13mm 15mm;
+  box-shadow: 0 10px 40px rgba(0,0,0,.18);
+  font-size: 9.6pt;
+  line-height: 1.34;
+}
+
+.r-header { margin-bottom: 9pt; }
+.r-name { font-size: 20pt; font-weight: 800; letter-spacing: -.01em; }
+.r-role { font-size: 10.8pt; color: #4a3d78; font-weight: 600; margin-top: 2pt; }
+.r-contacts {
+  margin-top: 6pt; display: flex; flex-wrap: wrap; gap: 3pt 14pt;
+  font-size: 8.8pt; color: #333;
+}
+.r-contacts span { white-space: nowrap; }
+
+.r-section { margin-top: 10pt; }
+.r-section h2 {
+  font-size: 10.2pt; text-transform: uppercase; letter-spacing: .05em;
+  border-bottom: 1.2pt solid #1a1a1a; padding-bottom: 2pt; margin-bottom: 6pt;
+  font-weight: 800;
+}
+
+.r-summary li { margin-bottom: 2.5pt; padding-left: 12pt; position: relative; }
+.r-summary li::before { content: "•"; position: absolute; left: 0; }
+
+.r-skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt 24pt; }
+.r-skills-grid div { font-size: 9pt; }
+.r-skills-grid b { font-weight: 700; }
+
+.r-entry { margin-bottom: 8pt; break-inside: avoid; }
+.r-entry:last-child { margin-bottom: 0; }
+.r-entry__top { display: flex; justify-content: space-between; gap: 10pt; font-weight: 700; font-size: 10pt; }
+.r-entry__sub { display: flex; justify-content: space-between; gap: 10pt; font-size: 9pt; color: #333; font-style: italic; margin-top: 1pt; }
+.r-entry p.desc { margin: 4pt 0 3pt; font-size: 9pt; }
+.r-entry ul { margin: 3pt 0 0; padding-left: 13pt; }
+.r-entry li { margin-bottom: 1.6pt; font-size: 9pt; padding-left: 3pt; position: relative; }
+.r-entry li::before { content: "•"; position: absolute; left: -11pt; }
+.r-entry .r-tech { margin-top: 3pt; font-size: 8.4pt; color: #444; }
+.r-entry .r-tech b { font-weight: 700; color: #1a1a1a; }
+
+.r-edu-item, .r-award-item { display: flex; justify-content: space-between; gap: 10pt; margin-bottom: 4pt; font-size: 9pt; }
+.r-edu-item:last-child, .r-award-item:last-child { margin-bottom: 0; }
+.r-edu-item .r-e-left b, .r-award-item .r-e-left b { font-weight: 700; }
+.r-edu-item .r-e-left div, .r-award-item .r-e-left div { color: #333; font-size: 8.6pt; }
+.r-edu-item .r-e-right, .r-award-item .r-e-right { white-space: nowrap; font-size: 8.6pt; color: #333; }
+
+.r-personal { font-size: 9pt; }
+.r-personal div { margin-bottom: 2pt; }
+
+.r-footer { margin-top: 12pt; font-size: 8pt; color: #666; text-align: center; }
+
+@media print {
+  html, body { background: #fff; }
+  .toolbar { display: none !important; }
+  .sheet { box-shadow: none; margin: 0; width: auto; min-height: 0; }
+  a { color: #1a1a1a !important; }
+  .r-entry { break-inside: avoid; }
+  .r-section h2 { break-after: avoid; }
+}
+
+@media screen and (max-width: 860px) {
+  .sheet { width: 100%; padding: 20px; font-size: 13px; }
+  .r-skills-grid { grid-template-columns: 1fr; }
+  .r-entry__top, .r-entry__sub, .r-edu-item, .r-award-item { flex-direction: column; gap: 2px; }
+}
