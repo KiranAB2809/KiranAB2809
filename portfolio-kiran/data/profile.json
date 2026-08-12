@@ -1,0 +1,274 @@
+{
+  "meta": {
+    "siteUrl": "https://kiranab2809.github.io",
+    "title": "Kiran AB — Tech Lead & Full-Stack Engineer",
+    "description": "Tech Lead with 9+ years building core banking and enterprise systems with Java Spring Boot, ReactJS, AWS and Kafka. Currently leading ORION at ANZ.",
+    "keywords": ["Kiran AB", "Tech Lead", "Full Stack Developer", "Java Spring Boot", "ReactJS", "AWS", "Kafka", "Core Banking", "ANZ", "Bangalore"],
+    "ogImage": "assets/img/og-image.png",
+    "themeColorDark": "#0b0f1a",
+    "themeColorLight": "#f7f7fb"
+  },
+
+  "profile": {
+    "name": "Kiran A B",
+    "shortName": "Kiran A B",
+    "initials": "KA",
+    "role": "Tech Lead & Full-Stack Engineer",
+    "roles": [
+      "Software Engineer",
+      "Tech Lead & Full-Stack Engineer",
+      "Java Spring Boot Architect",
+      "ReactJS Developer",
+      "Core Banking Systems Builder",
+      "Cloud & DevOps Practitioner"
+    ],
+    "tagline": "I design and ship scalable banking-grade systems — from Kafka event pipelines to the React screens bankers use every day — and I like leaving the codebase better than I found it.",
+    "location": "Bengaluru, Karnataka, India",
+    "phone": "+91 9738000271",
+    "email": "Kiran.28sep@gmail.com",
+    "avatar": "assets/img/avatar.jpg",
+    "resumeFile": "assets/resume/Kiran_AB_Resume.pdf",
+    "availability": "Open to Tech Lead / Senior Engineer roles",
+    "socials": [
+      { "label": "LinkedIn", "url": "https://www.linkedin.com/in/kiran-a-b-62ba6154/", "icon": "linkedin" },
+      { "label": "GitHub", "url": "https://github.com/KiranAB2809", "icon": "github" },
+      { "label": "Email", "url": "mailto:Kiran.28sep@gmail.com", "icon": "mail" },
+      { "label": "Phone", "url": "tel:+919738000271", "icon": "phone" }
+    ],
+    "githubUsername": "KiranAB2809",
+    "summary": [
+      "Accomplished Tech Lead with 9+ years of full-stack development experience, driving innovation in core banking and enterprise systems.",
+      "Strong command over Java Spring Boot, ReactJS, cloud technologies (AWS, Kafka), and modern DevOps practices.",
+      "Extensive hands-on experience in Agile methodologies and SAFe framework implementation.",
+      "Proven ability to lead high-performing teams while delivering scalable, production-grade applications.",
+      "Continuous learner with demonstrated expertise in emerging technologies and architectural best practices."
+    ]
+  },
+
+  "stats": [
+    { "value": 9, "suffix": "+", "label": "Years of Experience" },
+    { "value": 3, "suffix": "", "label": "Major Systems Shipped" },
+    { "value": 40, "suffix": "%", "label": "Response Time Reduction" },
+    { "value": 4, "suffix": "", "label": "Awards & Recognitions" }
+  ],
+
+  "experience": [
+    {
+      "company": "ANZ Operations and Technology",
+      "role": "Software Engineer — Tech Lead, Designer & Full Stack Developer",
+      "period": "November 2020 – Present",
+      "duration": "5+ years",
+      "location": "Bengaluru, India",
+      "current": true,
+      "summary": "In the Institutional Banking department, I hold the roles of Tech Lead, Designer, and Full Stack Developer. Primarily responsible for developing and maintaining core banking web-based applications tailored for Institutional Bankers.",
+      "highlights": [
+        "Architecting and developing backend microservices using Java Spring Boot with focus on scalability and performance",
+        "Designing and implementing responsive frontend solutions using ReactJS",
+        "Managing DevOps operations including CI/CD pipeline optimization and deployment automation",
+        "Mentoring junior developers and conducting technical code reviews to maintain code quality",
+        "Collaborating with stakeholders to translate business requirements into technical solutions",
+        "Implementing cloud-based solutions using AWS services for improved scalability and reliability"
+      ],
+      "achievements": [
+        "Led ORION project refactoring, modernizing legacy banking systems with the latest technology stack",
+        "Optimized application performance resulting in 40% reduction in response times",
+        "Implemented event-driven architecture patterns using Kafka for real-time data processing",
+        "Established best practices for microservices development and deployment"
+      ],
+      "tech": ["Java", "Spring Boot", "ReactJS", "AWS", "Kafka", "OpenShift", "PostgreSQL"]
+    },
+    {
+      "company": "Volvo Group India Private Limited",
+      "role": "Software Engineer",
+      "period": "November 2016 – November 2020",
+      "duration": "4 years",
+      "location": "Bengaluru, India",
+      "current": false,
+      "summary": "Full-stack software developer responsible for gathering requirements from stakeholders and developing solutions with rich UI and user-friendly interfaces. Core focus on API integration and functionality development according to specifications.",
+      "highlights": [
+        "Gathered requirements directly from stakeholders and translated them into working software",
+        "Built rich, user-friendly interfaces across multiple mission-critical applications",
+        "Focused on API integration and functionality development according to specifications",
+        "Supported global operations across Volvo Trucks, Volvo Buses and Mack Trucks"
+      ],
+      "achievements": [
+        "Awarded SPOT Award for dedication and commitment to excellence",
+        "Awarded Volvo IT Star Award for technical excellence and innovation",
+        "Runners-Up in Hackathon 2017 and Hackathon 2018 (Volvo IT Ignite)",
+        "Developed multiple mission-critical applications supporting global operations"
+      ],
+      "tech": ["Angular", "TypeScript", "ReactJS", "C# MVC API", "Docker", "OpenShift"]
+    }
+  ],
+
+  "projects": [
+    {
+      "name": "ORION",
+      "org": "ANZ Operations and Technology",
+      "period": "November 2020 – Present",
+      "featured": true,
+      "overview": "ORION is a pivotal core banking application within ANZ Institutional Banking undergoing comprehensive refactoring, rebuilt from the ground up using advanced technology stacks.",
+      "tech": ["Java", "Spring Boot", "ReactJS", "AWS", "OpenShift", "Kafka", "PostgreSQL"],
+      "responsibilities": [
+        "Tech Lead and Designer for the project, setting technical direction and standards",
+        "Architected microservices-based backend using Spring Boot and AWS services",
+        "Implemented Kafka-based event streaming for real-time transaction processing",
+        "Spearheaded development of user stories and technical implementation planning",
+        "Overseeing DevOps process including CI/CD pipeline improvements and cloud deployment",
+        "Contributed to knowledge sharing initiatives, enhancing team productivity",
+        "Demonstrated ownership of tasks from development through production deployment",
+        "Mentored junior developers on microservices architecture and cloud best practices"
+      ],
+      "impact": "Resulted in minimal defects and established this as the reference architecture for future ANZ projects.",
+      "links": []
+    },
+    {
+      "name": "NAMS",
+      "org": "Volvo Group — New After Market Service Integration System",
+      "period": "August 2018 – November 2020",
+      "featured": false,
+      "overview": "NAMS is a centralized integration system for Volvo aftermarket operations. NAMS Information Center (NIC) provides comprehensive visibility of NAMS operations, clients, and subsystems.",
+      "tech": ["ReactJS", "C# MVC API", "Docker", "OpenShift"],
+      "responsibilities": [
+        "Frontend development using ReactJS with focus on performance and usability",
+        "Designed and implemented visually appealing graphical user interfaces",
+        "Developed real-time status monitoring and alerting systems for subsystems",
+        "Proficiently handled API development and seamless front-end integration",
+        "Collaborated with cross-functional teams to ensure system reliability"
+      ],
+      "impact": "Gave operations teams live visibility into NAMS clients and subsystems for the first time.",
+      "links": []
+    },
+    {
+      "name": "Vehicle Data Administration (VDA+)",
+      "org": "Volvo Group",
+      "period": "November 2016 – August 2018",
+      "featured": false,
+      "overview": "Central Volvo system providing unified access to vehicle information across Volvo Trucks, Volvo Buses, and Mack Trucks. Enables read/write access to VDA data with capabilities for vehicle data modification, VIC card printing, and report generation.",
+      "tech": ["Angular 4", "TypeScript", "C# MVC API"],
+      "responsibilities": [
+        "Frontend development using Angular 4 with focus on data handling and user experience",
+        "Seamlessly integrated APIs and implemented functional components per specifications",
+        "Designed Angular structures and models for organized application architecture",
+        "Directly liaised with stakeholders for requirements gathering and implementation",
+        "Ensured high code quality and maintainability standards"
+      ],
+      "impact": "Unified vehicle data access across three brands into a single, maintainable application.",
+      "links": []
+    }
+  ],
+
+  "skillGroups": [
+    {
+      "name": "Backend & Cloud",
+      "icon": "server",
+      "skills": [
+        { "name": "Java / Spring Boot", "level": 95 },
+        { "name": "Microservices Architecture", "level": 92 },
+        { "name": "AWS (EC2, S3, EKS)", "level": 40 },
+        { "name": "Apache Kafka", "level": 85 },
+        { "name": "PostgreSQL / SQL Server", "level": 80 }
+      ]
+    },
+    {
+      "name": "Frontend",
+      "icon": "layout",
+      "skills": [
+        { "name": "ReactJS", "level": 40 },
+        { "name": "JavaScript (ES6+)", "level": 40 },
+        { "name": "TypeScript", "level": 40 },
+        { "name": "Angular", "level": 40 },
+        { "name": "HTML / CSS", "level": 40 }
+      ]
+    },
+    {
+      "name": "DevOps & Delivery",
+      "icon": "git-branch",
+      "skills": [
+        { "name": "CI/CD & Jenkins", "level": 85 },
+        { "name": "Docker / OpenShift", "level": 83 },
+        { "name": "Kubernetes Basics", "level": 65 },
+        { "name": "SAFe / Agile / Scrum", "level": 88 },
+        { "name": "Technical Leadership", "level": 90 }
+      ]
+    }
+  ],
+
+  "skillTags": [
+    "Java", "Spring Boot", "JPA", "Hibernate", "ReactJS", "Angular", "TypeScript",
+    "AWS", "OpenShift", "Docker", "Kubernetes", "Kafka", "PostgreSQL", "SQL Server",
+    "RESTful APIs", "Microservices", "Event-Driven Architecture", "CI/CD", "Jenkins",
+    "SAFe", "Agile", "Scrum", "Code Review", "Mentoring"
+  ],
+
+  "otherSkills": [
+    { "name": "Banking Domain", "detail": "Core banking applications, institutional banking operations" },
+    { "name": "Architecture", "detail": "Microservices design, event-driven architecture, API design patterns" },
+    { "name": "Software Development", "detail": "Full-stack development, technical design, code reviews, mentoring" }
+  ],
+
+  "education": [
+    {
+      "degree": "Bachelor of Engineering",
+      "field": "Information Science and Engineering",
+      "institution": "Acharya Institute of Technology, Visvesvaraya Technological University",
+      "board": "VTU",
+      "year": "July 2016",
+      "performance": "72.4% aggregate"
+    },
+    {
+      "degree": "Pre-University Course",
+      "field": "Computer Science",
+      "institution": "St. Joseph's PU College",
+      "board": "State PU Board, Karnataka",
+      "year": "July 2012",
+      "performance": "80.4% aggregate"
+    },
+    {
+      "degree": "Secondary School Leaving Certificate (SSLC)",
+      "field": "",
+      "institution": "St. Ann's High School",
+      "board": "State Board, Karnataka",
+      "year": "May 2010",
+      "performance": "72.7% aggregate"
+    }
+  ],
+
+  "awards": [
+    { "title": "Best Performer Award", "org": "ANZ Operations and Technology"},
+    { "title": "SPOT Award", "org": "Volvo Group", "year": "2016–2020", "note": "For dedication and commitment to excellence" },
+    { "title": "Volvo IT Star Award", "org": "Volvo Group", "year": "2016–2020", "note": "For technical excellence and innovation" },
+    { "title": "Runner-Up, Hackathon 2017", "org": "Volvo IT Ignite", "year": "2017", "note": "" },
+    { "title": "Runner-Up, Hackathon 2018", "org": "Volvo IT Ignite", "year": "2018", "note": "" }
+  ],
+
+  "personal": {
+    "dateOfBirth": "28 September 1994",
+    "nationality": "Indian",
+    "location": "Bengaluru, Karnataka",
+    "languages": ["English", "Kannada", "Telugu"],
+    "interests": ["Photography", "Travelling", "Technology Innovation"]
+  },
+
+  "contact": {
+    "heading": "Let's build something reliable together",
+    "blurb": "Open to Tech Lead and Senior Engineer roles. Reach out directly or drop a note below — I read everything myself.",
+    "formspreeEndpoint": "",
+    "showPhone": true
+  },
+
+  "github": {
+    "enabled": true,
+    "username": "KiranAB2809",
+    "maxRepos": 6,
+    "excludeForks": true,
+    "pinned": []
+  },
+
+  "resumeOptions": {
+    "includePersonalDetails": true,
+    "includeAwards": true,
+    "includeEducation": true,
+    "footerNote": "References available on request."
+  }
+}
