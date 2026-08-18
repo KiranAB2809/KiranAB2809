@@ -1,780 +1,906 @@
-(function () {
-  'use strict';
+/**
+ * main.js — Portfolio renderer
+ * Fetches data/profile.json and renders every section.
+ * NO external dependencies.
+ */
 
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ══════════════════════════════════════════════
+   SECURITY HELPERS
+   ══════════════════════════════════════════════ */
+const ALLOWED_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
-  /* ---------- security helpers ---------- */
-  function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-  var ALLOWED_SCHEMES = ['http:', 'https:', 'mailto:', 'tel:'];
-  function safeUrl(url) {
-    if (!url) return '#';
-    var trimmed = String(url).trim();
-    if (trimmed.startsWith('#') || trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../')) {
-      return trimmed; // relative, safe
-    }
-    try {
-      var parsed = new URL(trimmed, window.location.href);
-      if (ALLOWED_SCHEMES.indexOf(parsed.protocol) !== -1) return trimmed;
-    } catch (e) { /* fallthrough */ }
-    return '#';
-  }
+function safeHref(url) {
+  if (!url) return '#';
+  try {
+    if (url.startsWith('/') || url.startsWith('#') || url.startsWith('./')) return url;
+    const u = new URL(url);
+    return ALLOWED_SCHEMES.has(u.protocol) ? url : '#';
+  } catch { return '#'; }
+}
 
-  function el(html) {
-    var t = document.createElement('template');
-    t.innerHTML = html.trim();
-    return t.content.firstElementChild;
-  }
+function chip(text, extraClass = '') {
+  return `<span class="tech-chip ${extraClass}">${esc(text)}</span>`;
+}
 
-  /* ---------- icons (inline SVG, no external deps) ---------- */
-  var ICONS = {
-    linkedin: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3a1.96 1.96 0 1 0 0 3.92 1.96 1.96 0 0 0 0-3.92ZM20.44 20h-3.37v-5.6c0-1.34-.03-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96V20H9.68V8.5h3.24v1.57h.05c.45-.85 1.56-1.75 3.21-1.75 3.43 0 4.06 2.26 4.06 5.2V20Z"/></svg>',
-    github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 12 .5Z"/></svg>',
-    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4z"/><path d="m4 6 8 7 8-7"/></svg>',
-    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.9.6 2.7a2 2 0 0 1-.5 2.1L8 9.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>',
-    server: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg>',
-    layout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
-    'git-branch': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 9a9 9 0 0 1-9 9"/></svg>',
-    star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6.9 7.5.6-5.7 5 1.7 7.3L12 18l-6.4 3.8 1.7-7.3-5.7-5 7.5-.6L12 2Z"/></svg>',
-    fork: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M6 8.2V12a4 4 0 0 0 4 4M18 8.2V12a4 4 0 0 0-4 4"/></svg>'
+function socialIcon(type) {
+  const icons = {
+    linkedin: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
+    github:   `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`,
+    mail:     `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+    twitter:  `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>`,
   };
+  return icons[type] || '';
+}
 
-  /* ---------- fetch data ---------- */
-  function showJsWarning() {
-    var w = document.getElementById('jsWarning');
-    if (w) w.classList.add('is-active');
-  }
+function iconSVG(name) {
+  const icons = {
+    location: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    mail:     `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+    phone:    `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>`,
+    server:   `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+    monitor:  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+    cloud:    `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
+    users:    `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    star:     `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    fork:     `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
+    external: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+  };
+  return icons[name] || '';
+}
 
-  fetch('data/profile.json')
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function (data) {
-      render(data);
-    })
-    .catch(function (err) {
-      console.error('Failed to load profile.json:', err);
-      showJsWarning();
-    });
+/* ══════════════════════════════════════════════
+   THEME ENGINE
+   ══════════════════════════════════════════════ */
+const THEMES = ['dark', 'light', 'offwhite'];
+let currentThemeIdx = 0;
 
-  /* ---------- main render ---------- */
-  function render(data) {
-    window.__profileEmail = data.profile.email;
-    renderMeta(data);
-    renderNav(data);
-    renderHero(data);
-    renderStats(data.stats);
-    renderAbout(data);
-    renderExperience(data.experience);
-    renderProjects(data.projects);
-    renderSkills(data);
-    renderGithub(data.github);
-    renderEducationAwards(data);
-    renderContact(data);
-    renderFooter(data);
+function initTheme() {
+  const stored = localStorage.getItem('theme');
+  const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  const theme = stored || system;
+  const idx = THEMES.indexOf(theme);
+  currentThemeIdx = idx >= 0 ? idx : 0;
+  applyTheme(THEMES[currentThemeIdx]);
+}
 
-    initThemeToggle();
-    initMobileMenu();
-    initScrollSpyAndProgress();
-    initBackToTop();
-    initReveal();
-    initTilt();
-    initFormHandling(data.contact);
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  // Redraw radar on theme change
+  if (window.__radarData) drawRadar(window.__radarData);
+}
 
-    if (new URLSearchParams(window.location.search).get('debugOpenMenu') === '1') {
-      setTimeout(function () {
-        document.getElementById('mobileMenu').classList.add('is-open');
-      }, 200);
+function cycleTheme() {
+  currentThemeIdx = (currentThemeIdx + 1) % THEMES.length;
+  applyTheme(THEMES[currentThemeIdx]);
+}
+
+document.getElementById('theme-toggle')?.addEventListener('click', cycleTheme);
+
+/* ══════════════════════════════════════════════
+   SCROLL PROGRESS
+   ══════════════════════════════════════════════ */
+const progressBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  if (progressBar) progressBar.style.width = pct + '%';
+}, { passive: true });
+
+/* ══════════════════════════════════════════════
+   NAVBAR: scroll glass + spy
+   ══════════════════════════════════════════════ */
+const navbar = document.getElementById('navbar');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 60);
+
+  // Back to top
+  const btt = document.getElementById('back-to-top');
+  if (btt) btt.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+// Scroll spy
+const sections = document.querySelectorAll('section[id]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
     }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sections.forEach(s => observer.observe(s));
 
-    if (new URLSearchParams(window.location.search).get('debugWidth') === '1') {
-      setTimeout(function () {
-        var dbg = document.createElement('div');
-        dbg.style.cssText = 'position:fixed;top:80px;left:0;background:#000;color:#0f0;font-size:14px;z-index:99999;padding:8px;';
-        dbg.textContent = 'scrollWidth=' + document.documentElement.scrollWidth + ' innerWidth=' + window.innerWidth + ' bodyScrollW=' + document.body.scrollWidth;
-        document.body.appendChild(dbg);
-      }, 300);
+/* ══════════════════════════════════════════════
+   MOBILE MENU
+   ══════════════════════════════════════════════ */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+
+function closeMobileMenu() {
+  hamburger?.setAttribute('aria-expanded', 'false');
+  mobileMenu?.classList.remove('open');
+  mobileMenu?.setAttribute('aria-hidden', 'true');
+}
+
+hamburger?.addEventListener('click', () => {
+  const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+  hamburger.setAttribute('aria-expanded', String(!isOpen));
+  mobileMenu?.classList.toggle('open', !isOpen);
+  mobileMenu?.setAttribute('aria-hidden', String(isOpen));
+});
+
+document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMobileMenu));
+
+/* ══════════════════════════════════════════════
+   SCROLL REVEAL
+   ══════════════════════════════════════════════ */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+
+function activateReveal() {
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+}
+
+/* ══════════════════════════════════════════════
+   COUNT-UP ANIMATION
+   ══════════════════════════════════════════════ */
+function countUp(el, target, suffix = '', duration = 1800) {
+  if (!el) return;
+  const start = performance.now();
+  const tick = (now) => {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(eased * target);
+    el.textContent = current + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ══════════════════════════════════════════════
+   TYPING EFFECT
+   ══════════════════════════════════════════════ */
+function startTyping(el, roles) {
+  if (!el || !roles?.length) return;
+  let ri = 0, ci = 0, deleting = false;
+  const type = () => {
+    const role = roles[ri];
+    if (!deleting) {
+      el.textContent = role.slice(0, ++ci);
+      if (ci >= role.length) { setTimeout(() => { deleting = true; type(); }, 2200); return; }
+    } else {
+      el.textContent = role.slice(0, --ci);
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
     }
+    setTimeout(type, deleting ? 50 : 85);
+  };
+  type();
+}
 
-    // Testing aid: ?debugFlat=1 collapses the hero and forces reveal state
-    // so a single tall screenshot can capture the whole page without scrolling.
-    if (new URLSearchParams(window.location.search).get('debugFlat') === '1') {
-      document.body.classList.add('debug-scroll', 'debug-flat');
-      document.querySelectorAll('.skill-bar__fill').forEach(function (bar) { bar.style.width = bar.getAttribute('data-level') + '%'; });
-      document.querySelectorAll('.count').forEach(function (c) { c.textContent = c.getAttribute('data-target'); });
-      setTimeout(drawRadar, 100);
-    }
+/* ══════════════════════════════════════════════
+   PORTRAIT 3D TILT
+   ══════════════════════════════════════════════ */
+function initTilt(card) {
+  if (!card || !window.matchMedia('(pointer: fine)').matches) return;
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 14;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -14;
+    card.style.transform = `perspective(600px) rotateX(${y}deg) rotateY(${x}deg) scale(1.02)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+}
 
-    // Testing aid: ?debugScrollTo=<sectionId> scrolls after render settles.
-    // Harmless in production — only acts when the query param is present.
-    var debugTarget = new URLSearchParams(window.location.search).get('debugScrollTo');
-    if (debugTarget) {
-      document.body.classList.add('debug-scroll'); // testing aid: avoids a headless-screenshot compositing quirk with position:fixed after JS scroll
-      setTimeout(function () {
-        var t = document.getElementById(debugTarget);
-        if (t) t.scrollIntoView({ behavior: 'auto', block: 'start' });
-        // force reveal state immediately — IntersectionObserver callbacks
-        // don't fire reliably under Chrome's --virtual-time-budget mode.
-        document.querySelectorAll('.skill-bar__fill').forEach(function (bar) { bar.style.width = bar.getAttribute('data-level') + '%'; });
-        document.querySelectorAll('.count').forEach(function (c) { c.textContent = c.getAttribute('data-target'); });
-        drawRadar();
-      }, 300);
-    }
-  }
-
-  function renderMeta(data) {
-    document.title = data.meta.title;
-    document.getElementById('navBrand').textContent = data.profile.shortName || data.profile.name;
-    setAttr('meta[name="description"]', 'content', data.meta.description);
-    setAttr('link[rel="canonical"]', 'href', data.meta.siteUrl);
-    setAttr('meta[name="theme-color"]', 'content', data.meta.themeColorDark);
-    setAttr('meta[property="og:title"]', 'content', data.meta.title);
-    setAttr('meta[property="og:description"]', 'content', data.meta.description);
-    setAttr('meta[property="og:image"]', 'content', data.meta.siteUrl.replace(/\/$/, '') + '/' + data.meta.ogImage);
-
-    var kw = document.createElement('meta');
-    kw.name = 'keywords';
-    kw.content = (data.meta.keywords || []).join(', ');
-    document.head.appendChild(kw);
-
-    [
-      ['property', 'og:url', data.meta.siteUrl],
-      ['property', 'og:site_name', data.profile.name],
-      ['name', 'twitter:title', data.meta.title],
-      ['name', 'twitter:description', data.meta.description],
-      ['name', 'twitter:image', data.meta.siteUrl.replace(/\/$/, '') + '/' + data.meta.ogImage]
-    ].forEach(function (t) {
-      var m = document.createElement('meta');
-      m.setAttribute(t[0], t[1]);
-      m.setAttribute('content', t[2]);
-      document.head.appendChild(m);
-    });
-
-    // Person JSON-LD
-    var ld = document.createElement('script');
-    ld.type = 'application/ld+json';
-    ld.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: data.profile.name,
-      jobTitle: data.profile.role,
-      email: data.profile.email,
-      address: data.profile.location,
-      url: data.meta.siteUrl,
-      sameAs: (data.profile.socials || []).filter(function (s) { return s.url && s.url.indexOf('mailto') === -1 && s.url.indexOf('tel') === -1; }).map(function (s) { return s.url; })
-    });
-    document.head.appendChild(ld);
-  }
-
-  function setAttr(sel, attr, val) {
-    var n = document.querySelector(sel);
-    if (n && val) n.setAttribute(attr, val);
-  }
-
-  function renderNav(data) {
-    // links already static in HTML; nothing dynamic needed beyond brand (done in meta).
-  }
-
-  function socialIconRow(socials, size) {
-    var wrap = document.createElement('div');
-    wrap.style.display = 'contents';
-    (socials || []).forEach(function (s) {
-      var a = document.createElement('a');
-      a.href = safeUrl(s.url);
-      a.className = 'social-btn';
-      a.setAttribute('aria-label', s.label);
-      if (safeUrl(s.url).match(/^https?:/)) {
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+/* ══════════════════════════════════════════════
+   SKILL BARS — animated when scrolled in
+   ══════════════════════════════════════════════ */
+function initSkillBars() {
+  const bars = document.querySelectorAll('.skill-bar-fill[data-level]');
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.width = e.target.dataset.level + '%';
+        barObs.unobserve(e.target);
       }
-      a.innerHTML = ICONS[s.icon] || ICONS.mail;
-      wrap.appendChild(a);
     });
-    return wrap;
-  }
+  }, { threshold: 0.2 });
+  bars.forEach(b => barObs.observe(b));
+}
 
-  function renderHero(data) {
-    var p = data.profile;
-    document.getElementById('heroAvailability').textContent = p.availability || 'Available';
-    document.getElementById('heroName').textContent = p.name;
-    document.getElementById('heroTagline').textContent = p.tagline;
-    document.getElementById('heroResumeLink').href = 'resume.html';
-    document.getElementById('heroSocials').appendChild(socialIconRow(p.socials));
+/* ══════════════════════════════════════════════
+   RADAR CHART (canvas — no library)
+   ══════════════════════════════════════════════ */
+function drawRadar(groups) {
+  window.__radarData = groups;
+  const canvas = document.getElementById('radar-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
 
-    var avatarImg = document.getElementById('avatarImg');
-    var card = document.getElementById('portraitCard');
-    avatarImg.alt = p.name + ' — portrait';
-    avatarImg.onerror = function () {
-      card.innerHTML = '<div class="monogram">' + escapeHtml(p.initials || '') + '</div>';
-    };
-    avatarImg.src = p.avatar;
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const isDark = theme === 'dark';
+  const isOff = theme === 'offwhite';
 
-    document.getElementById('portraitCard').insertAdjacentHTML('beforeend',
-      '<div class="portrait-card__caption">' + escapeHtml(p.role) + ' · ' + escapeHtml(p.location) + '</div>');
+  const accent  = isDark ? '#8b5cf6' : isOff ? '#b45309' : '#7c3aed';
+  const accent2 = isDark ? '#06b6d4' : isOff ? '#0f766e' : '#0891b2';
+  const gridCol = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+  const labelCol = isDark ? 'rgba(240,234,255,0.8)' : 'rgba(26,16,48,0.8)';
 
-    // typing effect
-    var typedEl = document.getElementById('heroTypedRole');
-    typeRoles(typedEl, p.roles && p.roles.length ? p.roles : [p.role]);
-  }
+  // One data point per skill group — use average level
+  const points = groups.map(g => ({
+    label: g.name,
+    value: g.skills.reduce((s, sk) => s + sk.level, 0) / g.skills.length / 100
+  }));
 
-  function typeRoles(node, roles) {
-    if (prefersReducedMotion) {
-      node.textContent = roles[0];
-      return;
-    }
-    var roleIdx = 0, charIdx = 0, deleting = false;
-    var TYPE_SPEED = 55, DELETE_SPEED = 30, HOLD = 1400, GAP = 400;
+  const N = points.length;
+  const PAD = 72;
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(W, H) / 2 - PAD;
+  const LEVELS = 5;
 
-    function tick() {
-      var word = roles[roleIdx];
-      if (!deleting) {
-        charIdx++;
-        node.textContent = word.slice(0, charIdx);
-        if (charIdx === word.length) {
-          deleting = true;
-          setTimeout(tick, HOLD);
-          return;
-        }
-        setTimeout(tick, TYPE_SPEED);
-      } else {
-        charIdx--;
-        node.textContent = word.slice(0, charIdx);
-        if (charIdx === 0) {
-          deleting = false;
-          roleIdx = (roleIdx + 1) % roles.length;
-          setTimeout(tick, GAP);
-          return;
-        }
-        setTimeout(tick, DELETE_SPEED);
-      }
-    }
-    tick();
-  }
+  const angle = (i) => (Math.PI * 2 * i) / N - Math.PI / 2;
 
-  function renderStats(stats) {
-    var grid = document.getElementById('statsGrid');
-    (stats || []).forEach(function (s) {
-      var card = el('<div class="card stat-card reveal"><div class="stat-card__value"><span class="count" data-target="' + s.value + '">0</span>' + escapeHtml(s.suffix || '') + '</div><div class="stat-card__label">' + escapeHtml(s.label) + '</div></div>');
-      grid.appendChild(card);
-    });
-  }
-
-  function renderAbout(data) {
-    var list = document.getElementById('summaryList');
-    (data.profile.summary || []).forEach(function (line) {
-      list.appendChild(el('<li>' + escapeHtml(line) + '</li>'));
-    });
-
-    var other = document.getElementById('otherSkills');
-    (data.otherSkills || []).forEach(function (o) {
-      other.appendChild(el('<div class="card other-skill reveal"><h4>' + escapeHtml(o.name) + '</h4><p>' + escapeHtml(o.detail) + '</p></div>'));
-    });
-
-    var dl = document.getElementById('detailList');
-    var per = data.personal || {};
-    var rows = [
-      ['Location', data.profile.location],
-      ['Experience', (data.stats && data.stats[0]) ? (data.stats[0].value + data.stats[0].suffix + ' years') : ''],
-      ['Email', data.profile.email],
-      ['Phone', data.profile.phone],
-      ['Nationality', per.nationality],
-      ['Languages', (per.languages || []).join(', ')]
-    ];
-    rows.forEach(function (r) {
-      if (!r[1]) return;
-      dl.appendChild(el('<dt>' + escapeHtml(r[0]) + '</dt>'));
-      dl.appendChild(el('<dd>' + escapeHtml(r[1]) + '</dd>'));
-    });
-
-    var chips = document.getElementById('interestChips');
-    (per.interests || []).forEach(function (i) {
-      chips.appendChild(el('<span class="chip">' + escapeHtml(i) + '</span>'));
-    });
-  }
-
-  function renderExperience(experience) {
-    var tl = document.getElementById('timeline');
-    (experience || []).forEach(function (job) {
-      var item = document.createElement('div');
-      item.className = 'timeline-item reveal';
-      var achieveHtml = (job.achievements && job.achievements.length)
-        ? '<div class="tl-achieve"><h5>KEY ACHIEVEMENTS</h5><ul>' + job.achievements.map(function (a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ul></div>'
-        : '';
-      item.innerHTML =
-        '<div class="timeline-item__dot' + (job.current ? ' is-current' : '') + '"></div>' +
-        '<div class="card tl-card">' +
-          '<div class="tl-head">' +
-            '<div><div class="tl-role">' + escapeHtml(job.role) + '</div><div class="tl-company">' + escapeHtml(job.company) + '</div></div>' +
-            '<div class="tl-meta">' + escapeHtml(job.period) + '<br>' + escapeHtml(job.duration) + ' · ' + escapeHtml(job.location) + '</div>' +
-          '</div>' +
-          '<p class="tl-summary">' + escapeHtml(job.summary) + '</p>' +
-          '<ul class="tl-list">' + (job.highlights || []).map(function (h) { return '<li>' + escapeHtml(h) + '</li>'; }).join('') + '</ul>' +
-          achieveHtml +
-          '<div class="tl-tech">' + (job.tech || []).map(function (t) { return '<span class="chip">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' +
-        '</div>';
-      tl.appendChild(item);
-    });
-  }
-
-  function renderProjects(projects) {
-    var grid = document.getElementById('projectGrid');
-    (projects || []).forEach(function (proj) {
-      var card = document.createElement('div');
-      card.className = 'card project-card reveal' + (proj.featured ? ' is-featured' : '');
-      var links = (proj.links || []).map(function (l) {
-        var u = safeUrl(l.url);
-        return '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l.label) + ' ↗</a>';
-      }).join('');
-      card.innerHTML =
-        '<div class="project-card__top">' +
-          '<div><div class="project-card__name">' + escapeHtml(proj.name) + (proj.featured ? ' <span class="chip" style="margin-left:6px;">Featured</span>' : '') + '</div><div class="project-card__org">' + escapeHtml(proj.org) + '</div></div>' +
-          '<div class="project-card__period">' + escapeHtml(proj.period) + '</div>' +
-        '</div>' +
-        '<p class="project-card__overview">' + escapeHtml(proj.overview) + '</p>' +
-        '<div class="project-card__tech">' + (proj.tech || []).map(function (t) { return '<span class="chip">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' +
-        (proj.responsibilities && proj.responsibilities.length ?
-          '<details><summary>Responsibilities</summary><ul>' + proj.responsibilities.map(function (r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></details>' : '') +
-        (proj.impact ? '<div class="project-card__impact"><strong>Impact — </strong>' + escapeHtml(proj.impact) + '</div>' : '') +
-        (links ? '<div class="project-card__links">' + links + '</div>' : '');
-      grid.appendChild(card);
-    });
-  }
-
-  function renderSkills(data) {
-    var grid = document.getElementById('skillsGrid');
-    (data.skillGroups || []).forEach(function (g) {
-      var group = document.createElement('div');
-      group.className = 'card skill-group reveal';
-      var rowsHtml = (g.skills || []).map(function (s) {
-        return '<div class="skill-row"><div class="skill-row__top"><span>' + escapeHtml(s.name) + '</span><span>' + s.level + '%</span></div><div class="skill-bar"><div class="skill-bar__fill" data-level="' + s.level + '"></div></div></div>';
-      }).join('');
-      group.innerHTML = '<h3>' + (ICONS[g.icon] ? '<span style="width:18px;height:18px;display:inline-flex;color:var(--grad-2);">' + ICONS[g.icon] + '</span>' : '') + escapeHtml(g.name) + '</h3>' + rowsHtml;
-      grid.appendChild(group);
-    });
-
-    var cloud = document.getElementById('tagCloud');
-    (data.skillTags || []).forEach(function (t) {
-      cloud.appendChild(el('<span class="chip">' + escapeHtml(t) + '</span>'));
-    });
-
-    window.__radarData = (data.skillGroups || []).map(function (g) {
-      var avg = g.skills.reduce(function (a, s) { return a + s.level; }, 0) / g.skills.length;
-      return { label: g.name, value: Math.round(avg) };
-    });
-    drawRadar();
-  }
-
-  /* ---------- radar chart (canvas, no library) ---------- */
-  function drawRadar() {
-    var canvas = document.getElementById('radarCanvas');
-    if (!canvas || !window.__radarData || !window.__radarData.length) return;
-    var ctx = canvas.getContext('2d');
-    var W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-
-    var cx = W / 2, cy = H / 2 - 6;
-    var padding = 72; // reserve room for labels so they never clip
-    var radius = Math.min(cx, cy) - padding + 30;
-    var data = window.__radarData;
-    var n = data.length;
-    var styles = getComputedStyle(document.documentElement);
-    var gridColor = styles.getPropertyValue('--border').trim() || 'rgba(255,255,255,.12)';
-    var textColor = styles.getPropertyValue('--text-1').trim() || '#ccc';
-    var accent = styles.getPropertyValue('--grad-2').trim() || '#ec4899';
-    var accent2 = styles.getPropertyValue('--grad-1').trim() || '#7c3aed';
-
-    var rings = 4;
-    ctx.strokeStyle = gridColor;
-    ctx.lineWidth = 1;
-    for (var r = 1; r <= rings; r++) {
-      var rr = (radius / rings) * r;
-      ctx.beginPath();
-      for (var i = 0; i <= n; i++) {
-        var ang = (Math.PI * 2 * i) / n - Math.PI / 2;
-        var x = cx + rr * Math.cos(ang);
-        var y = cy + rr * Math.sin(ang);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
-
-    // spokes + labels
-    ctx.fillStyle = textColor;
-    ctx.font = '600 12px ' + (getComputedStyle(document.body).fontFamily || 'sans-serif');
-    for (i = 0; i < n; i++) {
-      ang = (Math.PI * 2 * i) / n - Math.PI / 2;
-      var ex = cx + radius * Math.cos(ang);
-      var ey = cy + radius * Math.sin(ang);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(ex, ey);
-      ctx.strokeStyle = gridColor;
-      ctx.stroke();
-
-      var labelR = radius + 26;
-      var lx = cx + labelR * Math.cos(ang);
-      var ly = cy + labelR * Math.sin(ang);
-      var label = data[i].label;
-      if (label.length > 16) label = label.slice(0, 15) + '…';
-      ctx.textAlign = Math.cos(ang) > 0.3 ? 'left' : (Math.cos(ang) < -0.3 ? 'right' : 'center');
-      ctx.textBaseline = Math.sin(ang) > 0.3 ? 'top' : (Math.sin(ang) < -0.3 ? 'bottom' : 'middle');
-      ctx.fillText(label, lx, ly);
-    }
-
-    // data polygon
-    var grad = ctx.createLinearGradient(0, 0, W, H);
-    grad.addColorStop(0, accent2);
-    grad.addColorStop(1, accent);
+  // Grid rings
+  for (let l = 1; l <= LEVELS; l++) {
+    const r = (R * l) / LEVELS;
     ctx.beginPath();
-    for (i = 0; i <= n; i++) {
-      var idx = i % n;
-      ang = (Math.PI * 2 * idx) / n - Math.PI / 2;
-      var val = data[idx].value / 100;
-      x = cx + radius * val * Math.cos(ang);
-      y = cy + radius * val * Math.sin(ang);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    for (let i = 0; i < N; i++) {
+      const a = angle(i);
+      const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
     ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.globalAlpha = 0.28;
+    ctx.strokeStyle = gridCol;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Spokes
+  for (let i = 0; i < N; i++) {
+    const a = angle(i);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = gridCol;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    const a = angle(i);
+    const r = R * p.value;
+    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+
+  // Fill gradient
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grad.addColorStop(0, accent + '55');
+  grad.addColorStop(1, accent2 + '22');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Dots
+  points.forEach((p, i) => {
+    const a = angle(i);
+    const r = R * p.value;
+    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
     ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = accent;
+    ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
     ctx.stroke();
+  });
 
-    for (i = 0; i < n; i++) {
-      ang = (Math.PI * 2 * i) / n - Math.PI / 2;
-      val = data[i].value / 100;
-      x = cx + radius * val * Math.cos(ang);
-      y = cy + radius * val * Math.sin(ang);
-      ctx.beginPath();
-      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = accent;
-      ctx.fill();
+  // Labels — clamped inside canvas with 70px padding
+  ctx.font = `600 11px Inter, system-ui, sans-serif`;
+  ctx.fillStyle = labelCol;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const MAX_LABEL = 14;
+  points.forEach((p, i) => {
+    const a = angle(i);
+    const labelR = R + 46;
+    let x = cx + labelR * Math.cos(a);
+    let y = cy + labelR * Math.sin(a);
+
+    // Clamp
+    x = Math.max(PAD - 16, Math.min(W - PAD + 16, x));
+    y = Math.max(PAD - 20, Math.min(H - PAD + 20, y));
+
+    const label = p.label.length > MAX_LABEL ? p.label.slice(0, MAX_LABEL - 1) + '…' : p.label;
+
+    // Percentage below label
+    ctx.font = '600 11px Inter, system-ui, sans-serif';
+    ctx.fillStyle = labelCol;
+    ctx.fillText(label, x, y);
+    ctx.font = '500 9px JetBrains Mono, monospace';
+    ctx.fillStyle = accent;
+    ctx.fillText(Math.round(p.value * 100) + '%', x, y + 14);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   GITHUB REPOS
+   ══════════════════════════════════════════════ */
+async function loadGitHubRepos(config) {
+  const wrap = document.getElementById('github-repos');
+  const ctaWrap = document.getElementById('github-cta');
+  const profileLink = document.getElementById('github-profile-link');
+
+  if (!config?.enabled || !config?.username) {
+    if (wrap) wrap.innerHTML = '';
+    return;
+  }
+
+  const ghUrl = `https://github.com/${esc(config.username)}`;
+  if (profileLink) profileLink.href = ghUrl;
+
+  const LANG_COLORS = {
+    JavaScript: '#f1e05a', TypeScript: '#3178c6', Java: '#b07219',
+    Python: '#3572A5', Go: '#00ADD8', Rust: '#dea584',
+    'C#': '#178600', CSS: '#563d7c', HTML: '#e34c26',
+    Shell: '#89e051', Kotlin: '#A97BFF', Swift: '#F05138',
+  };
+
+  try {
+    const res = await fetch(`https://api.github.com/users/${encodeURIComponent(config.username)}/repos?per_page=100&sort=updated`);
+
+    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+
+    let repos = await res.json();
+
+    // Filter
+    if (config.excludeForks) repos = repos.filter(r => !r.fork);
+
+    // Sort: pinned first, then stars desc, then updated desc
+    const pinned = config.pinned || [];
+    repos.sort((a, b) => {
+      const ai = pinned.indexOf(a.name), bi = pinned.indexOf(b.name);
+      if (ai >= 0 && bi >= 0) return ai - bi;
+      if (ai >= 0) return -1;
+      if (bi >= 0) return 1;
+      if (b.stargazers_count !== a.stargazers_count) return b.stargazers_count - a.stargazers_count;
+      return new Date(b.updated_at) - new Date(a.updated_at);
+    });
+
+    repos = repos.slice(0, config.maxRepos || 6);
+
+    const html = repos.map(r => {
+      const langColor = LANG_COLORS[r.language] || '#8b5cf6';
+      return `
+        <div class="glass-card repo-card reveal">
+          <div class="repo-name">
+            ${iconSVG('external')}
+            <a href="${safeHref(r.html_url)}" target="_blank" rel="noopener noreferrer">${esc(r.name)}</a>
+          </div>
+          <p class="repo-desc">${esc(r.description || 'No description available.')}</p>
+          <div class="repo-meta">
+            ${r.language ? `<span style="display:flex;align-items:center;gap:4px"><span class="repo-lang-dot" style="background:${esc(langColor)}"></span>${esc(r.language)}</span>` : ''}
+            <span style="display:flex;align-items:center;gap:3px">${iconSVG('star')} ${esc(String(r.stargazers_count))}</span>
+            <span style="display:flex;align-items:center;gap:3px">${iconSVG('fork')} ${esc(String(r.forks_count))}</span>
+          </div>
+        </div>`;
+    }).join('');
+
+    if (wrap) {
+      wrap.innerHTML = html;
+      // Activate reveal for freshly injected cards
+      wrap.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    }
+    if (ctaWrap) ctaWrap.style.display = 'block';
+    if (profileLink) profileLink.href = ghUrl;
+
+  } catch (err) {
+    console.warn('GitHub repos fetch failed:', err.message);
+    if (wrap) {
+      wrap.innerHTML = `
+        <div class="glass-card" style="grid-column:1/-1;text-align:center;padding:3rem">
+          <p style="color:var(--text-muted);margin-bottom:1rem">Could not load repositories (API rate limit or network issue).</p>
+          <a href="${ghUrl}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Browse GitHub Profile</a>
+        </div>`;
     }
   }
+}
 
-  /* ---------- github repos ---------- */
-  function renderGithub(gh) {
-    var grid = document.getElementById('repoGrid');
-    if (!gh || !gh.enabled || !gh.username) {
-      document.getElementById('github').style.display = 'none';
-      return;
-    }
-    for (var i = 0; i < (gh.maxRepos || 6); i++) {
-      grid.appendChild(el('<div class="skeleton"></div>'));
-    }
+/* ══════════════════════════════════════════════
+   CONTACT FORM
+   ══════════════════════════════════════════════ */
+function initContactForm(contactData, email) {
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('form-status');
+  const submitBtn = document.getElementById('cf-submit');
+  if (!form) return;
 
-    fetch('https://api.github.com/users/' + encodeURIComponent(gh.username) + '/repos?per_page=100')
-      .then(function (r) {
-        if (!r.ok) throw new Error('GitHub API ' + r.status);
-        return r.json();
-      })
-      .then(function (repos) {
-        if (gh.excludeForks) repos = repos.filter(function (r) { return !r.fork; });
-        var pinned = gh.pinned || [];
-        repos.sort(function (a, b) {
-          var pa = pinned.indexOf(a.name), pb = pinned.indexOf(b.name);
-          if (pa !== -1 || pb !== -1) {
-            if (pa === -1) return 1;
-            if (pb === -1) return -1;
-            return pa - pb;
-          }
-          if (b.stargazers_count !== a.stargazers_count) return b.stargazers_count - a.stargazers_count;
-          return new Date(b.pushed_at) - new Date(a.pushed_at);
-        });
-        repos = repos.slice(0, gh.maxRepos || 6);
-        grid.innerHTML = '';
-        if (!repos.length) {
-          renderGithubFallback(gh, grid, 'No public repositories found.');
-          return;
-        }
-        repos.forEach(function (repo) {
-          var card = document.createElement('a');
-          card.href = safeUrl(repo.html_url);
-          card.target = '_blank';
-          card.rel = 'noopener noreferrer';
-          card.className = 'card repo-card reveal is-visible';
-          card.innerHTML =
-            '<div class="repo-card__name">' + escapeHtml(repo.name) + '</div>' +
-            '<div class="repo-card__desc">' + escapeHtml(repo.description || 'No description provided.') + '</div>' +
-            '<div class="repo-card__meta"><span>★ ' + repo.stargazers_count + '</span><span>' + escapeHtml(repo.language || '—') + '</span></div>';
-          grid.appendChild(card);
-        });
-      })
-      .catch(function (err) {
-        console.warn('GitHub fetch failed (likely rate-limited or offline):', err);
-        grid.innerHTML = '';
-        renderGithubFallback(gh, grid);
-      });
-  }
+  const endpoint = contactData?.formspreeEndpoint;
+  const useMailto = !endpoint;
 
-  function renderGithubFallback(gh, grid, message) {
-    grid.appendChild(el(
-      '<div class="github-fallback" style="grid-column:1/-1;">' +
-        '<p>' + escapeHtml(message || "GitHub repos couldn't be loaded right now (rate limit or offline).") + '</p>' +
-        '<a class="btn btn--ghost" style="margin-top:16px;" href="' + safeUrl('https://github.com/' + gh.username) + '" target="_blank" rel="noopener noreferrer">Browse on GitHub ↗</a>' +
-      '</div>'
-    ));
-  }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let valid = true;
 
-  function renderEducationAwards(data) {
-    var edu = document.getElementById('educationList');
-    edu.appendChild(el('<h3 style="font-family:var(--font-mono);font-size:.85rem;color:var(--text-2);margin-bottom:12px;">EDUCATION</h3>'));
-    (data.education || []).forEach(function (e) {
-      edu.appendChild(el(
-        '<div class="ea-item"><h4>' + escapeHtml(e.degree) + (e.field ? ' — ' + escapeHtml(e.field) : '') + '</h4>' +
-        '<p>' + escapeHtml(e.institution) + '</p>' +
-        '<p><span class="ea-year">' + escapeHtml(e.year) + '</span> · ' + escapeHtml(e.performance) + '</p></div>'
-      ));
-    });
+    // Validate fields
+    form.querySelectorAll('input[required], textarea[required]').forEach(field => {
+      const errEl = field.nextElementSibling;
+      field.classList.remove('invalid');
+      if (errEl) errEl.textContent = '';
 
-    var awards = document.getElementById('awardsList');
-    awards.appendChild(el('<h3 style="font-family:var(--font-mono);font-size:.85rem;color:var(--text-2);margin-bottom:12px;">AWARDS</h3>'));
-    (data.awards || []).forEach(function (a) {
-      awards.appendChild(el(
-        '<div class="ea-item"><h4>' + escapeHtml(a.title) + '</h4>' +
-        '<p>' + escapeHtml(a.org) + (a.note ? ' — ' + escapeHtml(a.note) : '') + '</p>' +
-        '<p><span class="ea-year">' + escapeHtml(a.year) + '</span></p></div>'
-      ));
-    });
-  }
-
-  function renderContact(data) {
-    var c = data.contact || {};
-    document.getElementById('contactHeading').textContent = c.heading || 'Contact';
-    document.getElementById('contactBlurb').textContent = c.blurb || '';
-
-    var list = document.getElementById('contactList');
-    var p = data.profile;
-    var rows = [
-      { icon: 'mail', label: p.email, url: 'mailto:' + p.email },
-      { icon: 'linkedin', label: 'LinkedIn Profile', url: p.socials.find(function (s) { return s.icon === 'linkedin'; }).url },
-      { icon: 'github', label: 'GitHub Profile', url: p.socials.find(function (s) { return s.icon === 'github'; }).url }
-    ];
-    if (c.showPhone) rows.splice(1, 0, { icon: 'phone', label: p.phone, url: 'tel:' + p.phone.replace(/\s+/g, '') });
-
-    rows.forEach(function (r) {
-      var u = safeUrl(r.url);
-      var a = document.createElement('a');
-      a.href = u;
-      if (u.match(/^https?:/)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-      a.innerHTML = (ICONS[r.icon] || '') + '<span>' + escapeHtml(r.label) + '</span>';
-      list.appendChild(a);
-    });
-  }
-
-  function renderFooter(data) {
-    document.getElementById('footerYear').textContent = new Date().getFullYear();
-    document.getElementById('footerText').innerHTML = '© <span id="footerYear2">' + new Date().getFullYear() + '</span> ' + escapeHtml(data.profile.name) + '. All rights reserved.';
-    document.getElementById('footerSocials').appendChild(socialIconRow(data.profile.socials));
-  }
-
-  /* ---------- interactions ---------- */
-  function initThemeToggle() {
-    var btn = document.getElementById('themeToggle');
-    btn.addEventListener('click', function () {
-      var current = document.documentElement.getAttribute('data-theme');
-      var next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch (e) {}
-      drawRadar(); // re-render so grid/label colours stay legible
-    });
-  }
-
-  function initMobileMenu() {
-    var toggle = document.getElementById('menuToggle');
-    var menu = document.getElementById('mobileMenu');
-    function close() {
-      menu.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
-    toggle.addEventListener('click', function () {
-      var open = menu.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', String(open));
-    });
-    menu.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', close);
-    });
-  }
-
-  function initScrollSpyAndProgress() {
-    var nav = document.getElementById('nav');
-    var progress = document.getElementById('scrollProgress');
-    var navLinks = document.querySelectorAll('.nav__links a, .mobile-menu a');
-    var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
-
-    navLinks.forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var targetId = a.getAttribute('href');
-        if (!targetId || targetId.charAt(0) !== '#') return;
-        var target = document.querySelector(targetId);
-        if (!target) return;
-        e.preventDefault();
-        target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-        history.pushState(null, '', targetId);
-      });
-    });
-
-    function onScroll() {
-      var scrollTop = window.scrollY;
-      nav.classList.toggle('is-scrolled', scrollTop > 20);
-
-      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      progress.style.width = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) + '%' : '0%';
-
-      var current = null;
-      sections.forEach(function (s) {
-        var rect = s.getBoundingClientRect();
-        if (rect.top <= 120 && rect.bottom >= 120) current = s.id;
-      });
-      navLinks.forEach(function (a) {
-        a.classList.toggle('is-active', a.getAttribute('href') === '#' + current);
-      });
-    }
-    document.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  function initBackToTop() {
-    var btn = document.getElementById('backToTop');
-    document.addEventListener('scroll', function () {
-      btn.classList.toggle('is-visible', window.scrollY > 600);
-    }, { passive: true });
-    btn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-    });
-  }
-
-  function animateCount(node) {
-    var target = parseInt(node.getAttribute('data-target'), 10) || 0;
-    if (prefersReducedMotion) { node.textContent = target; return; }
-    var start = 0;
-    var duration = 1400;
-    var startTime = null;
-    function step(ts) {
-      if (!startTime) startTime = ts;
-      var progress = Math.min(1, (ts - startTime) / duration);
-      var eased = 1 - Math.pow(1 - progress, 3);
-      node.textContent = Math.round(start + (target - start) * eased);
-      if (progress < 1) requestAnimationFrame(step);
-      else node.textContent = target;
-    }
-    requestAnimationFrame(step);
-  }
-
-  function initReveal() {
-    var revealEls = document.querySelectorAll('.reveal');
-    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-      revealEls.forEach(function (elx) { elx.classList.add('is-visible'); });
-      document.querySelectorAll('.skill-bar__fill').forEach(function (bar) {
-        bar.style.width = bar.getAttribute('data-level') + '%';
-      });
-      document.querySelectorAll('.count').forEach(function (c) { c.textContent = c.getAttribute('data-target'); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry, i) {
-        if (entry.isIntersecting) {
-          var target = entry.target;
-          setTimeout(function () {
-            target.classList.add('is-visible');
-            var bars = target.querySelectorAll('.skill-bar__fill');
-            bars.forEach(function (bar) { bar.style.width = bar.getAttribute('data-level') + '%'; });
-            var counts = target.querySelectorAll('.count');
-            counts.forEach(animateCount);
-          }, (i % 6) * 70);
-          io.unobserve(target);
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
-    revealEls.forEach(function (elx) { io.observe(elx); });
-  }
-
-  function initTilt() {
-    if (prefersReducedMotion || !window.matchMedia('(pointer: fine)').matches) return;
-    var card = document.getElementById('portraitCard');
-    if (!card) return;
-    var bounds;
-    card.addEventListener('mouseenter', function () { bounds = card.getBoundingClientRect(); });
-    card.addEventListener('mousemove', function (e) {
-      if (!bounds) bounds = card.getBoundingClientRect();
-      var px = (e.clientX - bounds.left) / bounds.width - 0.5;
-      var py = (e.clientY - bounds.top) / bounds.height - 0.5;
-      card.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 10) + 'deg)';
-    });
-    card.addEventListener('mouseleave', function () {
-      card.style.transform = 'rotateY(0) rotateX(0)';
-    });
-  }
-
-  function initFormHandling(contact) {
-    var form = document.getElementById('contactForm');
-    var status = document.getElementById('formStatus');
-    if (!form) return;
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      status.textContent = '';
-      status.className = 'form-status';
-
-      var name = form.name.value.trim();
-      var email = form.email.value.trim();
-      var message = form.message.value.trim();
-      var honeypot = form._gotcha.value;
-
-      if (honeypot) { return; } // silently drop bot submissions
-
-      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!name || !emailOk || !message) {
-        status.textContent = 'Please fill in your name, a valid email, and a message.';
-        status.classList.add('err');
-        return;
+      if (!field.value.trim()) {
+        field.classList.add('invalid');
+        if (errEl) errEl.textContent = 'This field is required.';
+        valid = false;
+      } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+        field.classList.add('invalid');
+        if (errEl) errEl.textContent = 'Please enter a valid email address.';
+        valid = false;
+      } else if (field.minLength > 0 && field.value.trim().length < field.minLength) {
+        field.classList.add('invalid');
+        if (errEl) errEl.textContent = `Must be at least ${field.minLength} characters.`;
+        valid = false;
       }
+    });
 
-      var endpoint = contact && contact.formspreeEndpoint;
-      if (endpoint) {
-        fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Accept': 'application/json' },
-          body: new FormData(form)
-        }).then(function (r) {
-          if (r.ok) {
-            status.textContent = 'Thanks — your message was sent!';
-            status.classList.add('ok');
-            form.reset();
-          } else {
-            throw new Error('Formspree error');
-          }
-        }).catch(function () {
-          status.textContent = "Couldn't send automatically — opening your email client instead.";
-          status.classList.add('err');
-          openMailto(name, email, message);
-        });
+    if (!valid) return;
+
+    // Check honeypot
+    const honey = form.querySelector('[name="_honey"]');
+    if (honey?.value) return;
+
+    if (useMailto) {
+      const name = form.querySelector('#cf-name')?.value || '';
+      const subj = form.querySelector('#cf-subject')?.value || '';
+      const msg = form.querySelector('#cf-message')?.value || '';
+      const mailtoUrl = `mailto:${esc(email)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(`Hi Kiran,\n\n${msg}\n\n— ${name}`)}`;
+      window.location.href = mailtoUrl;
+
+      if (statusEl) {
+        statusEl.className = 'form-status success';
+        statusEl.textContent = '✓ Your email client is opening. Send when ready.';
+      }
+      return;
+    }
+
+    // Formspree submit
+    submitBtn?.classList.add('loading');
+    submitBtn && (submitBtn.disabled = true);
+
+    try {
+      const data = new FormData(form);
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        if (statusEl) { statusEl.className = 'form-status success'; statusEl.textContent = '✓ Message sent! I\'ll be in touch soon.'; }
+        form.reset();
       } else {
-        // No Formspree endpoint configured: fall back to mailto so the form is never broken.
-        status.textContent = 'Opening your email client to send this message…';
-        status.classList.add('ok');
-        openMailto(name, email, message);
+        throw new Error('Submission failed');
+      }
+    } catch {
+      if (statusEl) { statusEl.className = 'form-status error'; statusEl.textContent = '✗ Something went wrong. Please email me directly.'; }
+    } finally {
+      submitBtn?.classList.remove('loading');
+      submitBtn && (submitBtn.disabled = false);
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   STATS COUNT-UP OBSERVER
+   ══════════════════════════════════════════════ */
+function initStats(stats) {
+  const grid = document.getElementById('stats-grid');
+  if (!grid || !stats?.length) return;
+
+  grid.innerHTML = stats.map((s, i) =>
+    `<div class="stat-item reveal${i > 0 ? ' reveal-delay-' + i : ''}">
+       <span class="stat-value" data-target="${esc(String(s.value))}" data-suffix="${esc(s.suffix || '')}">0${esc(s.suffix || '')}</span>
+       <span class="stat-label">${esc(s.label)}</span>
+     </div>`
+  ).join('');
+
+  const statObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.stat-value[data-target]').forEach(el => {
+          countUp(el, parseInt(el.dataset.target), el.dataset.suffix);
+        });
+        statObs.unobserve(e.target);
       }
     });
+  }, { threshold: 0.5 });
 
-    function openMailto(name, email, message) {
-      var to = (window.__profileEmail || '');
-      var subject = encodeURIComponent('Portfolio contact from ' + name);
-      var body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
-      window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
-    }
+  grid.querySelectorAll('.stat-item').forEach(el => statObs.observe(el));
+  activateReveal();
+}
+
+/* ══════════════════════════════════════════════
+   RENDER FUNCTIONS
+   ══════════════════════════════════════════════ */
+function renderMeta(meta, profile) {
+  const setMeta = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
+  const setContent = (id, val) => setMeta(id, 'content', val);
+
+  document.title = esc(meta.title);
+  setContent('meta-description', meta.description);
+  setContent('meta-keywords', (meta.keywords || []).join(', '));
+  document.getElementById('meta-canonical')?.setAttribute('href', meta.siteUrl || '');
+  setContent('og-title', meta.title); setContent('og-desc', meta.description);
+  setContent('og-image', meta.siteUrl + '/' + meta.ogImage);
+  setContent('og-url', meta.siteUrl);
+  setContent('tw-title', meta.title); setContent('tw-desc', meta.description);
+  setContent('tw-image', meta.siteUrl + '/' + meta.ogImage);
+
+  // JSON-LD
+  const ld = {
+    '@context': 'https://schema.org', '@type': 'Person',
+    'name': profile.name, 'email': profile.email,
+    'telephone': profile.phone, 'jobTitle': profile.role,
+    'url': meta.siteUrl, 'image': meta.siteUrl + '/' + profile.avatar,
+    'sameAs': (profile.socials || []).map(s => s.url)
+  };
+  const ldEl = document.getElementById('jsonld-person');
+  if (ldEl) ldEl.textContent = JSON.stringify(ld);
+}
+
+function renderHero(p) {
+  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+
+  set('hero-availability', esc(p.availability || ''));
+  set('hero-name', esc(p.name));
+  set('hero-tagline', esc(p.tagline));
+  set('nav-initials', esc(p.initials || 'KA'));
+  set('portrait-caption-name', esc(p.name));
+  set('portrait-caption-role', esc(p.role));
+  set('portrait-monogram', esc(p.initials || 'KA'));
+
+  // Avatar fallback
+  const avatarEl = document.getElementById('hero-avatar');
+  const monogram = document.getElementById('portrait-monogram');
+  if (avatarEl) {
+    avatarEl.onerror = () => {
+      avatarEl.style.display = 'none';
+      if (monogram) monogram.style.display = 'flex';
+    };
   }
 
-})();
+  // Floating chips
+  const chips = ['Java', 'Spring Boot', 'ReactJS', 'AWS', 'Kafka'];
+  const chipsEl = document.getElementById('portrait-chips');
+  if (chipsEl) chipsEl.innerHTML = chips.map(c => `<span class="portrait-chip">${esc(c)}</span>`).join('');
+
+  // Socials
+  const socialsEl = document.getElementById('hero-socials');
+  if (socialsEl && p.socials) {
+    socialsEl.innerHTML = p.socials.map(s =>
+      `<a href="${safeHref(s.url)}" class="social-icon" aria-label="${esc(s.label)}" target="_blank" rel="noopener noreferrer">
+         ${socialIcon(s.icon)}
+       </a>`
+    ).join('');
+  }
+
+  // Resume links
+  const resumeHref = safeHref(p.resumeFile);
+  document.getElementById('nav-resume-btn')?.setAttribute('href', resumeHref);
+  document.getElementById('hero-resume-link')?.setAttribute('href', 'resume.html');
+
+  // Typing
+  startTyping(document.getElementById('typing-text'), p.roles || [p.role]);
+
+  // Tilt
+  initTilt(document.getElementById('portrait-card'));
+}
+
+function renderAbout(profile, personal) {
+  // Summary bullets
+  const summaryEl = document.getElementById('about-summary');
+  if (summaryEl && profile.summary) {
+    summaryEl.innerHTML = profile.summary.map(b => `<li>${esc(b)}</li>`).join('');
+  }
+
+  // Other skills
+  const osGrid = document.getElementById('other-skills-grid');
+  if (osGrid && profile.otherSkills) {
+    osGrid.innerHTML = (profile.otherSkills || []).map(s =>
+      `<div class="other-skill-card">
+         <div class="other-skill-name">${esc(s.name)}</div>
+         <div class="other-skill-detail">${esc(s.detail)}</div>
+       </div>`
+    ).join('');
+  }
+
+  // Details sidebar
+  const dl = document.getElementById('about-details');
+  if (dl && personal) {
+    const items = [
+      { label: 'Location', value: esc(profile.location || personal.location) },
+      { label: 'Email', value: `<a href="mailto:${esc(profile.email)}">${esc(profile.email)}</a>` },
+      { label: 'Phone', value: profile.phone ? `<a href="tel:${esc(profile.phone)}">${esc(profile.phone)}</a>` : null },
+      { label: 'Nationality', value: esc(personal.nationality) },
+      { label: 'Languages', value: esc((personal.languages || []).join(', ')) },
+    ].filter(i => i.value);
+
+    dl.innerHTML = items.map(i =>
+      `<div><dt>${esc(i.label)}</dt><dd>${i.value}</dd></div>`
+    ).join('');
+  }
+
+  // Interests
+  const interestsEl = document.getElementById('about-interests');
+  if (interestsEl && personal?.interests) {
+    interestsEl.innerHTML = personal.interests.map(i => `<span class="tag-mini">${esc(i)}</span>`).join('');
+  }
+}
+
+function renderExperience(experience) {
+  const timeline = document.getElementById('timeline');
+  if (!timeline || !experience) return;
+
+  timeline.innerHTML = experience.map(exp => `
+    <div class="timeline-item reveal">
+      <div class="timeline-dot${exp.current ? ' current' : ''}"></div>
+      <div class="timeline-card">
+        <div class="timeline-meta">
+          <span class="timeline-period">${esc(exp.period)}</span>
+          <span class="timeline-duration">${esc(exp.duration)}</span>
+          <span class="timeline-location">${esc(exp.location)}</span>
+        </div>
+        <h3 class="timeline-company">${esc(exp.company)}</h3>
+        <div class="timeline-role">${esc(exp.role)}</div>
+        <p class="timeline-summary">${esc(exp.summary)}</p>
+
+        <ul class="highlights-list">
+          ${(exp.highlights || []).map(h => `<li>${esc(h)}</li>`).join('')}
+        </ul>
+
+        ${exp.achievements?.length ? `
+        <div class="achievements-panel">
+          <h4>Key Achievements</h4>
+          <ul class="achievements-list">
+            ${exp.achievements.map(a => `<li>${esc(a)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        <div class="tech-chips">
+          ${(exp.tech || []).map(t => chip(t)).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderProjects(projects) {
+  const grid = document.getElementById('projects-grid');
+  if (!grid || !projects) return;
+
+  grid.innerHTML = projects.map(p => `
+    <div class="glass-card project-card reveal">
+      <div class="project-header">
+        <div class="project-org-period">${esc(p.org)} · ${esc(p.period)}</div>
+        <div class="project-name">${esc(p.name)}</div>
+        ${p.featured ? `<span class="project-featured">★ Featured</span>` : ''}
+      </div>
+
+      <p class="project-overview">${esc(p.overview)}</p>
+
+      ${(p.responsibilities || []).length > 0 ? `
+      <details class="project-responsibilities">
+        <summary>Responsibilities (${(p.responsibilities || []).length})</summary>
+        <ul>${(p.responsibilities || []).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+      </details>` : ''}
+
+      ${p.impact ? `
+      <div class="project-impact">
+        <strong>Impact</strong>${esc(p.impact)}
+      </div>` : ''}
+
+      <div class="project-footer">
+        <div class="tech-chips">
+          ${(p.tech || []).map(t => chip(t)).join('')}
+        </div>
+        ${(p.links || []).length ? `
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          ${p.links.map(l => `<a href="${safeHref(l.url)}" class="btn btn-sm btn-outline" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSkills(skillGroups, skillTags) {
+  const wrap = document.getElementById('skill-bars-wrap');
+  if (wrap && skillGroups) {
+    wrap.innerHTML = skillGroups.map(g => `
+      <div class="skill-group reveal">
+        <div class="skill-group-header">
+          <div class="skill-group-icon">${iconSVG(g.icon || 'server')}</div>
+          <span class="skill-group-name">${esc(g.name)}</span>
+        </div>
+        <div class="skill-bar-wrap">
+          ${(g.skills || []).map(s => `
+            <div class="skill-item">
+              <div class="skill-item-header">
+                <span class="skill-name">${esc(s.name)}</span>
+                <span class="skill-pct">${esc(String(s.level))}%</span>
+              </div>
+              <div class="skill-bar-bg">
+                <div class="skill-bar-fill" data-level="${esc(String(s.level))}" style="width:0%"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+    initSkillBars();
+    drawRadar(skillGroups);
+  }
+
+  // Tag cloud
+  const tagsEl = document.getElementById('skill-tags');
+  if (tagsEl && skillTags) {
+    tagsEl.innerHTML = skillTags.map(t => `<span class="skill-tag">${esc(t)}</span>`).join('');
+  }
+}
+
+function renderEducation(education, awards) {
+  const eduEl = document.getElementById('education-list');
+  if (eduEl && education) {
+    eduEl.innerHTML = education.map(e => `
+      <div class="edu-item reveal">
+        <div class="edu-degree">${esc(e.degree)}</div>
+        ${e.field ? `<div class="edu-field">${esc(e.field)}</div>` : ''}
+        <div class="edu-institution">${esc(e.institution)}</div>
+        <div class="edu-meta">${esc(e.board)} · ${esc(e.year)} · ${esc(e.performance)}</div>
+      </div>
+    `).join('');
+  }
+
+  const awardsEl = document.getElementById('awards-list');
+  if (awardsEl && awards) {
+    awardsEl.innerHTML = awards.map((a, i) => `
+      <div class="award-item reveal${i > 0 ? ' reveal-delay-' + Math.min(i, 5) : ''}">
+        <div class="award-title">${esc(a.title)}</div>
+        <div class="award-meta">${esc(a.org)} · ${esc(a.year)}</div>
+        ${a.note ? `<div class="award-note">${esc(a.note)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+}
+
+function renderContact(contact, profile) {
+  const hEl = document.getElementById('contact-heading');
+  if (hEl) hEl.textContent = contact?.heading || 'Get In Touch';
+  const bEl = document.getElementById('contact-blurb');
+  if (bEl) bEl.textContent = contact?.blurb || '';
+
+  const listEl = document.getElementById('contact-list');
+  if (listEl) {
+    const items = [
+      { icon: 'location', label: 'Location', value: esc(profile.location) },
+      { icon: 'mail', label: 'Email', value: `<a href="mailto:${esc(profile.email)}">${esc(profile.email)}</a>` },
+    ];
+    if (contact?.showPhone && profile.phone) {
+      items.push({ icon: 'phone', label: 'Phone', value: `<a href="tel:${esc(profile.phone)}">${esc(profile.phone)}</a>` });
+    }
+    listEl.innerHTML = items.map(i => `
+      <li class="contact-item">
+        <div class="contact-item-icon">${iconSVG(i.icon)}</div>
+        <div class="contact-item-text">
+          <div class="contact-item-label">${esc(i.label)}</div>
+          <div class="contact-item-value">${i.value}</div>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  initContactForm(contact, profile.email);
+}
+
+function renderFooter(profile) {
+  const yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  const nameEl = document.getElementById('footer-name');
+  if (nameEl) nameEl.textContent = profile.name;
+
+  const socialsEl = document.getElementById('footer-socials');
+  if (socialsEl && profile.socials) {
+    socialsEl.innerHTML = profile.socials.map(s =>
+      `<a href="${safeHref(s.url)}" class="social-icon" aria-label="${esc(s.label)}" target="_blank" rel="noopener noreferrer">
+         ${socialIcon(s.icon)}
+       </a>`
+    ).join('');
+  }
+}
+
+/* ══════════════════════════════════════════════
+   BACK TO TOP
+   ══════════════════════════════════════════════ */
+document.getElementById('back-to-top')?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ══════════════════════════════════════════════
+   BOOTSTRAP
+   ══════════════════════════════════════════════ */
+async function init() {
+  // Detect file:// protocol
+  if (location.protocol === 'file:') {
+    document.body.innerHTML = `
+      <div class="file-error-banner">
+        <div>
+          <h1>⚠ Open via the dev server</h1>
+          <p>This site uses <code>fetch()</code> to load content, which is blocked on <code>file://</code>.</p>
+          <p style="margin-top:1rem">Run: <code>npm start</code> then open <strong>http://127.0.0.1:5173</strong></p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch('data/profile.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    const { meta, profile, stats, experience, projects, skillGroups, skillTags,
+            education, awards, personal, contact, github: ghConfig } = data;
+
+    renderMeta(meta, profile);
+    renderHero(profile);
+    renderAbout(profile, personal);
+    initStats(stats);
+    renderExperience(experience);
+    renderProjects(projects);
+    renderSkills(skillGroups, skillTags);
+    renderEducation(education, awards);
+    renderContact(contact, profile);
+    renderFooter(profile);
+
+    // GitHub (async — does not block paint)
+    loadGitHubRepos(ghConfig);
+
+    // Activate scroll reveal
+    activateReveal();
+
+  } catch (err) {
+    console.error('Failed to load profile.json:', err);
+    const main = document.getElementById('main-content');
+    if (main) {
+      main.insertAdjacentHTML('afterbegin', `
+        <div style="padding:4rem 2rem;text-align:center;color:var(--text-secondary)">
+          <h2 style="color:var(--accent-3);margin-bottom:1rem">Could not load profile data</h2>
+          <p>${esc(err.message)}</p>
+          <p style="margin-top:.5rem;font-family:var(--font-mono);font-size:.85rem">Make sure you ran <strong>npm start</strong> and <strong>data/profile.json</strong> exists.</p>
+        </div>`);
+    }
+  }
+}
+
+initTheme();
+init();

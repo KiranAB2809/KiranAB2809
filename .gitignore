@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Generated assets (regenerate with npm run build)
+# assets/resume/*.pdf  ← keep PDF committed so Download button works
+# assets/img/og-image.png ← keep committed
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp
+*.tmp
+assets/img/avatar-raw.png

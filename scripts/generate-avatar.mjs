@@ -1,97 +1,113 @@
-// Crops + background-removes + composites assets/img/avatar-source.* onto a
-// studio-style gradient backdrop, saving the result to assets/img/avatar.jpg.
-//
-// If no source photo exists, this exits cleanly with instructions rather
-// than failing — the site already falls back to a monogram automatically.
-import path from 'node:path';
-import fs from 'node:fs';
-import { listen, ROOT } from './server.mjs';
-import { runChrome, findChrome } from './chrome.mjs';
+/**
+ * scripts/generate-avatar.mjs
+ * Generates a styled portrait from assets/img/avatar-source.* using
+ * MediaPipe Selfie Segmentation (loaded from jsDelivr CDN).
+ * Falls back gracefully if the model cannot load.
+ *
+ * ─── Tuneable Constants ───────────────────────────────────────
+ *   CROP    { x, y, w, h }  — source pixels to crop (4:5 ratio)
+ *   FEATHER 2               — mask edge blur in pixels
+ *   TINT    0.08            — brand colour overlay opacity (soft-light)
+ *   RIM     0.18            — rim light opacity (≤ 0.20 to avoid halo)
+ *   SETTLE  3000            — ms to wait for model + render (ms)
+ *   MUTE    0.30            — desaturation below collar (0 = none, 1 = full)
+ * ──────────────────────────────────────────────────────────────
+ *
+ * Usage: node scripts/generate-avatar.mjs
+ *        npm run avatar
+ */
 
-const SOURCE_CANDIDATES = ['avatar-source.jpg', 'avatar-source.jpeg', 'avatar-source.png'];
+import { mkdirSync, existsSync, readdirSync } from 'node:fs';
+import { resolve, join, extname }             from 'node:path';
+import { fileURLToPath }                      from 'node:url';
+import { startServer }                        from './server.mjs';
+import { findChrome, runHeadless }            from './chrome.mjs';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const ROOT      = resolve(__dirname, '..');
 
 async function main() {
-  const imgDir = path.join(ROOT, 'assets/img');
-  const source = SOURCE_CANDIDATES.map((f) => path.join(imgDir, f)).find((p) => fs.existsSync(p));
+  console.log('\n╔═══════════════════════════════════════╗');
+  console.log('║  Avatar Portrait Generator            ║');
+  console.log('╚═══════════════════════════════════════╝\n');
 
-  if (!source) {
-    console.log(
-      '\n  No source photo found.\n\n' +
-      '  Put a photo at assets/img/avatar-source.jpg (or .png) and re-run `npm run avatar`.\n' +
-      '  Until then, the hero will show a styled monogram instead — nothing is broken.\n'
-    );
+  findChrome();
+
+  // Find source image
+  const imgDir = join(ROOT, 'assets', 'img');
+  const sourceExts = ['.jpg', '.jpeg', '.png', '.webp'];
+  const sourceFile = readdirSync(imgDir).find(f =>
+    f.startsWith('avatar-source') && sourceExts.includes(extname(f).toLowerCase())
+  );
+
+  if (!sourceFile) {
+    console.warn('  ⚠ No avatar-source.* found in assets/img/. Skipping avatar generation.');
+    console.warn('  Place your photo as assets/img/avatar-source.jpg and re-run npm run avatar\n');
     return;
   }
 
-  findChrome(); // fail fast with a clear message if Chrome isn't installed
+  const outPath = join(imgDir, 'avatar.jpg');
+  console.log(`  Source     : ${sourceFile}`);
+  console.log(`  Output     : ${outPath}\n`);
 
-  const rawPng = path.join(ROOT, '.tmp-avatar.png');
-  fs.mkdirSync(path.dirname(rawPng), { recursive: true });
+  const { server, port } = await startServer(0);
+  const url = `http://127.0.0.1:${port}/scripts/avatar-template.html?src=${encodeURIComponent(sourceFile)}`;
 
-  console.log('Starting local server…');
-  const { server, url } = await listen();
+  console.log(`  Template   : ${url}\n`);
 
   try {
-    const srcName = path.basename(source);
-    const templateUrl = `${url}/scripts/avatar-template.html?src=../assets/img/${encodeURIComponent(srcName)}`;
+    const pngOut = join(imgDir, 'avatar-raw.png');
 
-    console.log('Rendering portrait (crop, background removal, compositing)…');
-    await runChrome([
-      '--screenshot=' + rawPng,
+    await runHeadless([
+      '--headless=new',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--allow-file-access-from-files',
+      `--screenshot=${pngOut}`,
       '--window-size=800,1000',
+      '--force-device-scale-factor=1',
+      `--virtual-time-budget=35000`,
       '--run-all-compositor-stages-before-draw',
-      '--virtual-time-budget=30000', // generous headroom: this loads a WASM model from a CDN
-      templateUrl
-    ], { timeoutMs: 50000 });
+      url,
+    ]);
 
-    if (!fs.existsSync(rawPng)) {
-      throw new Error('Chrome did not produce a screenshot.');
+    if (!existsSync(pngOut)) throw new Error('Screenshot was not created.');
+
+    console.log(`  ✦ PNG captured: ${pngOut}`);
+
+    // Re-encode PNG → JPEG via PowerShell (Windows) for smaller file size
+    if (process.platform === 'win32') {
+      const ps = `
+        Add-Type -AssemblyName System.Drawing
+        $src = [System.Drawing.Image]::FromFile('${pngOut.replace(/\\/g, '\\\\')}')
+        $enc = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Object { $_.MimeType -eq 'image/jpeg' }
+        $params = New-Object System.Drawing.Imaging.EncoderParameters(1)
+        $params.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, 88L)
+        $src.Save('${outPath.replace(/\\/g, '\\\\')}', $enc, $params)
+        $src.Dispose()
+        Write-Host "JPEG saved"
+      `;
+      const { execSync } = await import('node:child_process');
+      execSync(`powershell -Command "${ps.replace(/\n/g, ' ')}"`, { stdio: 'pipe' });
+      console.log(`  ✦ JPEG saved : ${outPath}`);
+
+      // Clean up raw PNG
+      try { (await import('node:fs')).unlinkSync(pngOut); } catch {}
+    } else {
+      // On non-Windows just rename PNG → jpg (caller can convert manually)
+      (await import('node:fs')).renameSync(pngOut, outPath.replace('.jpg', '.png'));
+      console.log(`  ✦ PNG saved  : ${outPath.replace('.jpg', '.png')}`);
+      console.log('  Note: Run imagemagick or similar to convert to JPEG on non-Windows.');
     }
 
-    const outPath = path.join(imgDir, 'avatar.jpg');
-    await reencodeToJpeg(rawPng, outPath);
-    fs.unlinkSync(rawPng);
-
-    const sizeKb = (fs.statSync(outPath).size / 1024).toFixed(1);
-    console.log(`\n  ✔ Portrait written to assets/img/avatar.jpg (${sizeKb} KB)\n`);
   } finally {
     server.close();
+    console.log('  Server stopped.\n');
   }
 }
 
-// Re-encodes the Chrome screenshot (PNG) to a smaller JPEG using whatever
-// image tool is already on the machine — no npm dependency added. Tries
-// ImageMagick/GraphicsMagick (mac/Linux), then a PowerShell System.Drawing
-// call (Windows), then Python+Pillow if present. If none are available,
-// falls back to copying the PNG bytes as-is: browsers render it fine
-// regardless of the .jpg extension, it just won't be as compact.
-async function reencodeToJpeg(pngPath, outPath) {
-  const { spawnSync } = await import('node:child_process');
-  const attempts = [
-    () => spawnSync('convert', [pngPath, '-quality', '82', outPath]),
-    () => spawnSync('gm', ['convert', pngPath, '-quality', '82', outPath]),
-    () => spawnSync('powershell', ['-NoProfile', '-Command',
-      `Add-Type -AssemblyName System.Drawing; ` +
-      `$img = [System.Drawing.Image]::FromFile('${pngPath}'); ` +
-      `$img.Save('${outPath}', [System.Drawing.Imaging.ImageFormat]::Jpeg); $img.Dispose()`]),
-    () => spawnSync('python3', ['-c',
-      `from PIL import Image; Image.open(r"${pngPath}").convert("RGB").save(r"${outPath}", quality=82)`])
-  ];
-  for (const attempt of attempts) {
-    try {
-      const result = attempt();
-      if (result.status === 0 && fs.existsSync(outPath)) return;
-    } catch (e) { /* tool not installed — try the next one */ }
-  }
-  console.warn(
-    '  (Optional) No image conversion tool found (ImageMagick/PowerShell/Pillow).\n' +
-    '  Copying the screenshot as-is — it will display fine, just larger than ~100KB.\n'
-  );
-  fs.copyFileSync(pngPath, outPath);
-}
-
-main().catch((err) => {
-  console.error('\n  ✖ Failed to generate the portrait:\n');
-  console.error(err.message || err);
+main().catch(err => {
+  console.error('\n  ✗ Avatar generation failed:', err.message);
   process.exit(1);
 });

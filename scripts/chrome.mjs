@@ -1,102 +1,86 @@
-// Locates an installed Chrome / Edge / Chromium binary and drives it in
-// headless mode via child_process — no puppeteer/playwright dependency.
-import { spawn } from 'node:child_process';
-import fs from 'node:fs';
-import os from 'node:os';
+/**
+ * scripts/chrome.mjs
+ * Probes standard Chrome/Edge install paths on win32 / darwin / linux.
+ * Honours CHROME_PATH env var override.
+ * Exports: findChrome(), runHeadless(args)
+ */
 
-const CANDIDATES = {
-  win32: [
-    'C\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
-  ],
-  darwin: [
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge'
-  ],
-  linux: [
-    '/opt/google/chrome/chrome',
-    '/usr/bin/google-chrome',
-    '/usr/bin/google-chrome-stable',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-    '/usr/bin/microsoft-edge',
-    '/usr/bin/microsoft-edge-stable',
-    '/snap/bin/chromium'
-  ]
-};
+import { existsSync }        from 'node:fs';
+import { spawn }             from 'node:child_process';
+import { platform }          from 'node:process';
+
+const WIN_PATHS = [
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  process.env.LOCALAPPDATA + '\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+];
+
+const MAC_PATHS = [
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium-browser',
+];
+
+const LIN_PATHS = [
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+  '/usr/bin/chromium-browser',
+  '/usr/bin/chromium',
+  '/snap/bin/chromium',
+  '/usr/bin/microsoft-edge',
+];
 
 export function findChrome() {
-  if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) {
+  // 1. Env override
+  if (process.env.CHROME_PATH && existsSync(process.env.CHROME_PATH)) {
     return process.env.CHROME_PATH;
   }
-  const platform = os.platform();
-  const paths = CANDIDATES[platform] || [];
-  for (const p of paths) {
-    if (fs.existsSync(p)) return p;
+
+  // 2. Platform paths
+  const candidates = platform === 'win32' ? WIN_PATHS
+                   : platform === 'darwin' ? MAC_PATHS
+                   : LIN_PATHS;
+
+  for (const p of candidates) {
+    if (p && existsSync(p)) return p;
   }
+
   throw new Error(
-    'Could not find a Chrome / Edge / Chromium install.\n' +
-    'Set the CHROME_PATH environment variable to the full path of your browser executable, e.g.\n' +
-    '  CHROME_PATH="/path/to/chrome" npm run pdf'
+    `Chrome or Edge was not found on this machine.\n` +
+    `Set the CHROME_PATH environment variable to its executable path and retry.\n` +
+    `Example (PowerShell):\n` +
+    `  $env:CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"\n` +
+    `  npm run pdf`
   );
 }
 
-// Runs Chrome headless with the given CLI flags and resolves when it exits.
-export function runChrome(args, { timeoutMs = 45000 } = {}) {
-  const bin = findChrome();
+/**
+ * runHeadless(args)
+ * Spawns headless Chrome with given CLI args.
+ * Returns a Promise that resolves when Chrome exits (code 0) or rejects on error.
+ */
+export function runHeadless(args = []) {
+  const chromePath = findChrome();
+  console.log(`  Using browser: ${chromePath}`);
+  console.log(`  Args: ${args.slice(0, 4).join(' ')} …`);
+
   return new Promise((resolve, reject) => {
-    const child = spawn(bin, [
-      '--headless=new',
-      '--disable-gpu',
-      '--no-sandbox',
-      '--disable-dev-shm-usage',
-      '--hide-scrollbars',
-      '--force-color-profile=srgb',
-      ...args
-    ], { stdio: ['ignore', 'pipe', 'pipe'] });
+    const proc = spawn(chromePath, args, { stdio: 'pipe' });
 
-    let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (d) => (stdout += d));
-    child.stderr.on('data', (d) => (stderr += d));
+    proc.stderr?.on('data', d => { stderr += d.toString(); });
 
-    const timer = setTimeout(() => {
-      child.kill('SIGKILL');
-      reject(new Error(`Chrome timed out after ${timeoutMs}ms.\nstderr:\n${stderr}`));
-    }, timeoutMs);
+    proc.on('close', (code) => {
+      if (code === 0 || code === null) {
+        resolve();
+      } else {
+        reject(new Error(`Chrome exited with code ${code}.\n${stderr.slice(-400)}`));
+      }
+    });
 
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      if (code === 0) resolve({ stdout, stderr });
-      else reject(new Error(`Chrome exited with code ${code}\nstderr:\n${stderr}`));
-    });
-    child.on('error', (err) => {
-      clearTimeout(timer);
-      reject(err);
-    });
+    proc.on('error', reject);
   });
-}
-
-export async function printToPdf(url, outPath, { virtualTimeBudget = 30000 } = {}) {
-  await runChrome([
-    '--print-to-pdf=' + outPath,
-    '--no-pdf-header-footer',
-    '--run-all-compositor-stages-before-draw',
-    '--virtual-time-budget=' + virtualTimeBudget,
-    url
-  ], { timeoutMs: virtualTimeBudget + 20000 });
-}
-
-export async function screenshot(url, outPath, { width = 1280, height = 800, virtualTimeBudget = 30000 } = {}) {
-  await runChrome([
-    '--screenshot=' + outPath,
-    `--window-size=${width},${height}`,
-    '--run-all-compositor-stages-before-draw',
-    '--virtual-time-budget=' + virtualTimeBudget,
-    url
-  ], { timeoutMs: virtualTimeBudget + 20000 });
 }

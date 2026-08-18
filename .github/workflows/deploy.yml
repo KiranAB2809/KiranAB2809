@@ -1,0 +1,64 @@
+name: Deploy Portfolio to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Chromium (for PDF & OG generation)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y chromium-browser
+          echo "CHROME_PATH=$(which chromium-browser)" >> $GITHUB_ENV
+
+      - name: Generate Resume PDF
+        run: node scripts/generate-pdf.mjs
+        continue-on-error: true   # Don't fail deploy if PDF gen fails
+
+      - name: Generate OG Image
+        run: node scripts/generate-og.mjs
+        continue-on-error: true
+
+      - name: Commit generated assets back to repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/resume/ assets/img/og-image.png || true
+          git diff --cached --quiet || git commit -m "ci: regenerate PDF and OG image [skip ci]"
+          git push || true
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
