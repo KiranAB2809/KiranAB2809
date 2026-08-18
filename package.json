@@ -1,15 +1,16 @@
 {
   "name": "kiran-ab-portfolio",
   "version": "1.0.0",
-  "description": "Personal portfolio + auto-generated ATS resume for Kiran AB. Zero npm dependencies.",
+  "description": "Personal portfolio and resume for Kiran AB — Tech Lead & Full-Stack Engineer",
   "type": "module",
-  "private": true,
   "scripts": {
     "start": "node scripts/server.mjs",
     "dev": "node scripts/server.mjs",
     "pdf": "node scripts/generate-pdf.mjs",
     "avatar": "node scripts/generate-avatar.mjs",
     "og": "node scripts/generate-og.mjs",
-    "build": "npm run pdf && npm run og"
-  }
+    "build": "node scripts/generate-pdf.mjs && node scripts/generate-og.mjs"
+  },
+  "engines": { "node": ">=18.0.0" },
+  "license": "MIT"
 }

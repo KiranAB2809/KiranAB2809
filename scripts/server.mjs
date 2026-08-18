@@ -1,90 +1,98 @@
-// Zero-dependency static file server used both for `npm start` and by the
-// PDF / OG generator scripts (which need a real http:// origin for fetch()
-// to work — file:// URLs cannot fetch() local JSON).
-import http from 'node:http';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+/**
+ * scripts/server.mjs
+ * Zero-dependency static file server using Node built-ins only.
+ * Serves the project root on http://127.0.0.1:5173
+ * Blocks directory traversal outside the project root.
+ */
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const ROOT = path.resolve(__dirname, '..');
+import { createServer }       from 'node:http';
+import { createReadStream, statSync } from 'node:fs';
+import { join, resolve, extname } from 'node:path';
+import { fileURLToPath }      from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const ROOT      = resolve(__dirname, '..');
+const PORT      = process.env.PORT ? parseInt(process.env.PORT) : 5173;
+const HOST      = '127.0.0.1';
+
+export const ROOT_DIR = ROOT;
+export const SERVER_PORT = PORT;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
+  '.css':  'text/css; charset=utf-8',
+  '.js':   'application/javascript; charset=utf-8',
+  '.mjs':  'application/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
+  '.png':  'image/png',
+  '.jpg':  'image/jpeg',
   '.jpeg': 'image/jpeg',
-  '.ico': 'image/x-icon',
-  '.pdf': 'application/pdf',
-  '.txt': 'text/plain; charset=utf-8',
-  '.xml': 'application/xml; charset=utf-8',
-  '.webmanifest': 'application/manifest+json'
+  '.gif':  'image/gif',
+  '.svg':  'image/svg+xml',
+  '.ico':  'image/x-icon',
+  '.pdf':  'application/pdf',
+  '.webp': 'image/webp',
+  '.woff': 'font/woff',
+  '.woff2':'font/woff2',
+  '.ttf':  'font/ttf',
+  '.txt':  'text/plain; charset=utf-8',
+  '.xml':  'application/xml',
 };
 
-function safeJoin(root, urlPath) {
-  const decoded = decodeURIComponent(urlPath.split('?')[0]);
-  const requested = path.normalize(path.join(root, decoded));
-  // Block path traversal — resolved path must stay inside root.
-  if (!requested.startsWith(root)) return null;
-  return requested;
+function serveFile(req, res) {
+  let urlPath = req.url.split('?')[0];
+  if (urlPath === '/') urlPath = '/index.html';
+
+  // Resolve and guard against traversal
+  const absolute = resolve(join(ROOT, decodeURIComponent(urlPath)));
+  if (!absolute.startsWith(ROOT)) {
+    res.writeHead(403); res.end('Forbidden'); return;
+  }
+
+  let filePath = absolute;
+  // Try index.html inside directories
+  try {
+    const st = statSync(filePath);
+    if (st.isDirectory()) filePath = join(filePath, 'index.html');
+  } catch {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('404 Not Found: ' + urlPath);
+    return;
+  }
+
+  const ext  = extname(filePath).toLowerCase();
+  const mime = MIME[ext] || 'application/octet-stream';
+
+  let stat;
+  try { stat = statSync(filePath); } catch {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('404 Not Found: ' + urlPath);
+    return;
+  }
+
+  res.writeHead(200, {
+    'Content-Type':   mime,
+    'Content-Length': stat.size,
+    'Cache-Control':  'no-cache',
+    'X-Content-Type-Options': 'nosniff',
+  });
+
+  createReadStream(filePath).pipe(res);
 }
 
-export function createServer(root = ROOT) {
-  return http.createServer((req, res) => {
-    let filePath = safeJoin(root, req.url || '/');
-    if (!filePath) {
-      res.writeHead(403);
-      res.end('Forbidden');
-      return;
-    }
-    if (filePath.endsWith(path.sep) || req.url === '/') {
-      filePath = path.join(root, 'index.html');
-    }
-    fs.stat(filePath, (err, stat) => {
-      if (err) {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('404 Not Found: ' + req.url);
-        return;
-      }
-      if (stat.isDirectory()) {
-        filePath = path.join(filePath, 'index.html');
-      }
-      fs.readFile(filePath, (err2, data) => {
-        if (err2) {
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.end('404 Not Found: ' + req.url);
-          return;
-        }
-        const ext = path.extname(filePath).toLowerCase();
-        res.writeHead(200, {
-          'Content-Type': MIME[ext] || 'application/octet-stream',
-          'Cache-Control': 'no-cache'
-        });
-        res.end(data);
-      });
+// Export factory so generator scripts can start/stop the server
+export function startServer(port = PORT) {
+  return new Promise((resolveP) => {
+    const server = createServer(serveFile);
+    server.listen(port, HOST, () => {
+      const addr = `http://${HOST}:${port}`;
+      console.log(`\n  ✦ Portfolio server running at ${addr}\n`);
+      resolveP({ server, addr, port });
     });
   });
 }
 
-// Starts the server on an ephemeral (or given) port and resolves once listening.
-export function listen(port = 0, root = ROOT) {
-  return new Promise((resolve) => {
-    const server = createServer(root);
-    server.listen(port, '127.0.0.1', () => {
-      const actualPort = server.address().port;
-      resolve({ server, port: actualPort, url: `http://127.0.0.1:${actualPort}` });
-    });
-  });
-}
-
-// If run directly: `node scripts/server.mjs` -> serve on fixed dev port.
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const PORT = process.env.PORT ? Number(process.env.PORT) : 5173;
-  const { url } = await listen(PORT);
-  console.log(`\n  Portfolio dev server running:\n\n    ${url}\n\n  Press Ctrl+C to stop.\n`);
+// Run directly
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  startServer(PORT);
 }

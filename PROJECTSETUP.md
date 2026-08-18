@@ -1,154 +1,260 @@
-# Kiran AB — Portfolio + Auto-Generated Resume
+# Kiran AB — Personal Portfolio & Resume
 
-A personal portfolio site with an ATS-friendly resume PDF, both generated from a single
-JSON file. Static HTML + vanilla JS. Zero npm dependencies — nothing to `npm install`.
+> A **zero-dependency** personal portfolio website with auto-generated, ATS-friendly resume PDF.  
+> All content comes from one file: **`data/profile.json`**.
 
-## Quick start
+---
+
+## Quick Start
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/KiranAB2809/portfolio.git
+cd portfolio
+
+# 2. Start the dev server (no npm install needed!)
 npm start
+
+# 3. Open your browser
+#    Portfolio → http://127.0.0.1:5173
+#    Resume    → http://127.0.0.1:5173/resume.html
 ```
 
-Then open **http://127.0.0.1:5173** in your browser. (Opening `index.html` directly with
-`file://` will not work — the page fetches `data/profile.json`, which browsers block over
-`file://`. The site will show an on-page message telling you this if it happens.)
+> ⚠️ **Always open the site through the dev server.** Opening `index.html` directly via `file://` will show an error because `fetch()` is blocked on the file protocol.
 
-To stop the server, press `Ctrl+C`.
+---
 
-## The one file you edit: `data/profile.json`
+## npm Scripts
 
-Everything on the site and in the resume — your name, roles, experience, projects, skills,
-education, awards — comes from this single file. Edit it, refresh your browser, and the
-site updates. No other file needs to change for content edits.
+| Command | What it does |
+|---------|-------------|
+| `npm start` / `npm run dev` | Starts the local server at `http://127.0.0.1:5173` |
+| `npm run pdf` | Regenerates `assets/resume/Kiran_AB_Resume.pdf` from `profile.json` |
+| `npm run avatar` | Re-processes your portrait photo → `assets/img/avatar.jpg` |
+| `npm run og` | Regenerates the OpenGraph preview image → `assets/img/og-image.png` |
+| `npm run build` | Runs `pdf` + `og` together (used by CI) |
 
-| `profile.json` key | Controls |
-| --- | --- |
-| `meta.*` | Page title, description, SEO tags, OpenGraph image, theme colors |
-| `profile.name` / `shortName` / `initials` | Hero heading, nav brand, monogram fallback |
-| `profile.roles[]` | The typing-effect role rotator in the hero |
-| `profile.tagline` | One-line sentence under the role |
-| `profile.avatar` | Path to your photo (falls back to a monogram if missing/broken) |
-| `profile.resumeFile` | Path to the generated PDF (download button + `npm run pdf` output) |
-| `profile.availability` | The green pill in the hero |
-| `profile.socials[]` | Icon row in hero, footer, and contact section |
-| `profile.summary[]` | Bullet list in the About section (and resume Profile Summary) |
-| `stats[]` | The four animated counters below the hero |
-| `experience[]` | Career timeline. `highlights` = day-to-day, `achievements` = outcomes shown in the accent panel. `current: true` gives the pulsing dot |
-| `projects[]` | Project cards. `featured: true` adds a badge. `responsibilities` sit behind a "Responsibilities" disclosure |
-| `skillGroups[]` | Skill bars **and** the radar chart (levels are 0–100 estimates — edit freely) |
-| `skillTags[]` | The tag cloud under the radar chart |
-| `otherSkills[]` | Small cards in the About section |
-| `education[]`, `awards[]` | Education & Awards section, and resume sections of the same name |
-| `personal.*` | Details panel in About, and the resume's Personal Details section |
-| `contact.*` | Contact heading/blurb, and whether the phone number is shown |
-| `github.*` | Which GitHub username's repos to show, how many, sort/exclude rules |
-| `resumeOptions.*` | Toggle whether the PDF includes Education / Awards / Personal Details, plus a footer note |
+---
 
-## Swapping in your photo
+## File Structure
 
-1. Put your photo at `assets/img/avatar-source.jpg` (or `.png`).
-2. Run `npm run avatar`. This crops it, removes the background, and composites it onto a
-   studio-style gradient backdrop matching the site's palette, then saves the result to
-   `assets/img/avatar.jpg`.
-3. If you don't run this step (or the image fails to load for any reason), the hero
-   automatically falls back to a styled monogram of your initials — nothing breaks.
+```
+portfolio/
+├── index.html                 ← Portfolio shell (content injected by JS)
+├── resume.html                ← Printable A4 resume shell
+├── data/
+│   └── profile.json           ← ✦ THE ONLY FILE YOU NEED TO EDIT ✦
+├── assets/
+│   ├── css/
+│   │   ├── styles.css         ← All portfolio styles + 3 themes
+│   │   └── resume.css         ← Print-optimised A4 resume styles
+│   ├── js/
+│   │   ├── main.js            ← Renders the portfolio from profile.json
+│   │   └── resume.js          ← Renders the resume from profile.json
+│   ├── img/
+│   │   ├── avatar-source.jpg  ← Your original unedited photo (keep this!)
+│   │   ├── avatar.jpg         ← Processed portrait (auto-generated)
+│   │   ├── og-image.png       ← Social share preview (auto-generated)
+│   │   └── favicon.svg        ← Browser tab icon
+│   └── resume/
+│       └── Kiran_AB_Resume.pdf ← Auto-generated resume PDF
+├── scripts/
+│   ├── server.mjs             ← Static dev server (Node built-ins only)
+│   ├── chrome.mjs             ← Headless Chrome/Edge locator
+│   ├── generate-pdf.mjs       ← PDF pipeline
+│   ├── generate-avatar.mjs    ← Portrait pipeline
+│   ├── generate-og.mjs        ← OG image pipeline
+│   ├── avatar-template.html   ← Offscreen portrait render target
+│   └── og-template.html       ← Offscreen OG card render target
+├── .github/
+│   └── workflows/
+│       └── deploy.yml         ← GitHub Actions: auto-deploy to Pages
+├── robots.txt
+├── sitemap.xml
+├── .nojekyll
+├── .gitignore
+└── README.md
+```
 
-Tuning knobs (crop box, feather radius, tint strength, rim light, color grading) are all
-named constants at the top of `scripts/generate-avatar.mjs`, with comments explaining each.
+---
 
-## Enabling the contact form
+## `data/profile.json` — Key Reference
 
-The form works out of the box with **no backend**: without a Formspree endpoint configured,
-submitting it opens the visitor's email client with a pre-filled `mailto:` message instead.
+Edit this one file to update everything on the site **and** the PDF resume.
 
-To wire up real form submissions:
+| Key | Controls |
+|-----|---------|
+| `meta.title` | Browser tab title + OG title |
+| `meta.description` | SEO meta description |
+| `meta.siteUrl` | Canonical URL (update before deploying) |
+| `meta.keywords` | SEO keywords array |
+| `profile.name` | Your full name (hero, nav logo, footer) |
+| `profile.role` | Primary job title |
+| `profile.roles[]` | Cycling roles in the hero typing effect |
+| `profile.tagline` | One-line hero tagline |
+| `profile.availability` | The green pill in the hero (e.g. "Open to senior roles") |
+| `profile.email` | Contact email, linked in About + Contact |
+| `profile.phone` | Phone number (shown only if `contact.showPhone: true`) |
+| `profile.location` | City shown in About sidebar |
+| `profile.avatar` | Path to your portrait image |
+| `profile.resumeFile` | Path to generated PDF (for Download button) |
+| `profile.socials[]` | Social links — each needs `label`, `url`, `icon` (linkedin/github/mail) |
+| `profile.summary[]` | Bullet points in the About section |
+| `stats[]` | The animated counters strip (value, suffix, label) |
+| `experience[]` | Work history — drives the timeline section |
+| `experience[].current` | Set `true` to show pulsing dot on current role |
+| `experience[].highlights[]` | Day-to-day responsibilities |
+| `experience[].achievements[]` | Outcomes shown in the accent panel |
+| `experience[].tech[]` | Tech chips on each role card |
+| `projects[]` | Project cards grid |
+| `projects[].featured` | Shows a ★ badge on the card |
+| `skillGroups[]` | Animated skill bars + radar chart |
+| `skillGroups[].skills[].level` | 0–100 estimate (editable — set to what feels right) |
+| `skillTags[]` | Clickable tag cloud below the radar |
+| `otherSkills[]` | Mini-cards in the About section |
+| `education[]` | Education entries |
+| `awards[]` | Awards & recognition entries |
+| `personal` | Date of birth, nationality, languages, interests |
+| `contact.formspreeEndpoint` | Your Formspree form ID (leave `""` for mailto fallback) |
+| `contact.showPhone` | `true` to show phone in Contact section |
+| `github.enabled` | `true` to show GitHub repos section |
+| `github.username` | Your GitHub username |
+| `github.maxRepos` | Max repos to display (default 6) |
+| `github.excludeForks` | `true` to hide forked repos |
+| `github.pinned[]` | Array of repo names to show first |
+| `resumeOptions.includePersonalDetails` | Include personal details in PDF |
+| `resumeOptions.includeAwards` | Include awards in PDF |
+| `resumeOptions.footerNote` | Footer text on the PDF |
 
-1. Create a free form at [formspree.io](https://formspree.io) and copy your endpoint URL.
-2. Paste it into `contact.formspreeEndpoint` in `data/profile.json`.
-3. Refresh — the form now POSTs to Formspree, with the `mailto:` behavior kept as an
-   automatic fallback if that request ever fails.
+> **Skill levels** are editable estimates derived from seniority and usage. They are not scientific — tune them to feel accurate to you.
 
-## How the resume PDF is produced
+---
 
-```bash
+## Themes
+
+The site ships with **three themes** cycled via the moon/sun button in the nav:
+
+| Theme | Description |
+|-------|-------------|
+| `dark` | Deep purple-navy with violet/cyan gradients (default) |
+| `light` | White with purple/teal accents |
+| `offwhite` | Warm cream/parchment editorial feel |
+
+Your choice persists in `localStorage`. On first visit, it defaults to your OS preference (`prefers-color-scheme`).
+
+**To add a custom colour:** edit the CSS custom properties in `assets/css/styles.css` under `[data-theme="dark"]` / `[data-theme="light"]` / `[data-theme="offwhite"]`.
+
+---
+
+## Swapping Your Photo
+
+1. Place your new photo as `assets/img/avatar-source.jpg` (or `.png`)
+2. Open `scripts/avatar-template.html` and adjust the `CROP` constant at the top:
+   ```js
+   const CROP = { x: 0, y: 0, w: 800, h: 1000 };
+   // x, y = top-left pixel of crop; w/h = crop size in source pixels
+   // Maintain 4:5 ratio (w * 1.25 = h)
+   ```
+3. Tune the other knobs if needed:
+   ```js
+   const FEATHER = 2;    // mask edge softness (px)
+   const TINT    = 0.08; // brand colour overlay (0–1, keep low)
+   const RIM     = 0.18; // rim light strength (keep ≤ 0.20)
+   const SETTLE  = 3000; // wait time for render (ms)
+   const MUTE    = 0.30; // clothing desaturation below collar (0–1)
+   ```
+4. Run: `npm run avatar`
+
+If no photo is present, the hero falls back to a styled **KA monogram** automatically — nothing breaks.
+
+---
+
+## Enabling the Contact Form
+
+The form falls back to `mailto:` by default. To use Formspree:
+
+1. Go to [formspree.io](https://formspree.io) → create a free form
+2. Copy your endpoint URL (e.g. `https://formspree.io/f/xpzgkdjw`)
+3. In `data/profile.json`, set:
+   ```json
+   "contact": {
+     "formspreeEndpoint": "https://formspree.io/f/xpzgkdjw"
+   }
+   ```
+4. Refresh the site — the form will now POST to Formspree instead of opening your email client
+
+---
+
+## How the PDF is Produced
+
+1. `npm run pdf` starts a temporary local server on a random port
+2. It opens `resume.html?print=1` in **headless Chrome** (the one already installed on your machine)
+3. Chrome renders the page using `resume.css` (A4 layout, sizes in pt) and exports to PDF
+4. The PDF is saved to `assets/resume/Kiran_AB_Resume.pdf`
+5. The file is text-based and ATS-parseable (never an image)
+
+If Chrome isn't found automatically, set the path:
+```powershell
+$env:CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 npm run pdf
 ```
 
-This starts the local server, opens `resume.html` in headless Chrome, and prints it to
-`assets/resume/<name from profile.json>.pdf` — a real, text-selectable, ATS-parseable PDF
-(not an image). Run this again any time you change `profile.json` and want the PDF to match.
-
-If Chrome isn't found automatically, point to it explicitly:
-
-```bash
-CHROME_PATH="/path/to/chrome" npm run pdf
-```
+---
 
 ## Publishing to GitHub Pages
 
-1. Create a new GitHub repository and push this project to it:
+### First time setup
+
+1. Create a GitHub repo (e.g. `portfolio`)
+2. Push your code:
    ```bash
    git init
    git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/<you>/<repo>.git
+   git commit -m "initial commit"
+   git remote add origin https://github.com/KiranAB2809/portfolio.git
    git push -u origin main
    ```
-2. In the repo, go to **Settings → Pages** and set the source to **GitHub Actions**.
-3. The included workflow (`.github/workflows/deploy.yml`) will regenerate the resume PDF
-   and OG image and deploy automatically on every push to `main`.
+3. In GitHub → **Settings → Pages → Source** → select `GitHub Actions`
+4. The `deploy.yml` workflow will run automatically on every push to `main`
 
-**Root domain (`<you>.github.io`)** — if your repo is named exactly `<you>.github.io`, the
-site is served from the domain root and no URLs need to change.
+### URL Cases
 
-**Sub-path (`<you>.github.io/<repo>/`)** — for any other repo name, GitHub serves the site
-under a sub-path. Update `meta.siteUrl` in `data/profile.json` to include that sub-path
-(e.g. `https://you.github.io/portfolio-kiran`), since it's used to build the canonical URL,
-OpenGraph image URL, and sitemap.
+| Case | Your URL | Files to update |
+|------|----------|----------------|
+| Root domain (`KiranAB2809.github.io`) | `https://KiranAB2809.github.io` | Set `meta.siteUrl` in `profile.json` |
+| Sub-path (`KiranAB2809.github.io/portfolio`) | `https://KiranAB2809.github.io/portfolio` | Set `meta.siteUrl`; update `sitemap.xml` URLs |
 
-## Customisation
+> For sub-path deployments all asset links already use relative paths, so no other changes are needed.
 
-| Want to change… | Edit |
-| --- | --- |
-| Colors / gradient | CSS custom properties at the top of `assets/css/styles.css` (`--grad-1` … `--grad-4`) |
-| Fonts | `--font-sans` / `--font-mono` in the same file |
-| Motion / animation speed | Look for `@keyframes` blocks in `styles.css`; all respect `prefers-reduced-motion` automatically |
-| Section order | Reorder the `<section>` blocks in `index.html` (nav links use `href="#id"` and will still work in any order) |
-| Light/dark default | The inline script in `<head>` of `index.html` — currently follows the OS preference on first visit, then remembers the user's choice |
+---
 
-## File tree
+## Customisation Reference
 
-```
-portfolio-kiran/
-├─ index.html                 # portfolio shell (rendered by main.js)
-├─ resume.html                # printable A4 resume shell (rendered by resume.js)
-├─ data/profile.json          # ← the only file you edit for content
-├─ assets/
-│  ├─ css/styles.css          # site theme, layout, components, animation
-│  ├─ css/resume.css          # print-optimized resume styles
-│  ├─ js/main.js              # renders the portfolio from profile.json
-│  ├─ js/resume.js            # renders the resume from profile.json
-│  ├─ img/                    # favicon, avatar, og-image
-│  └─ resume/                 # generated PDF lives here (committed to the repo)
-├─ scripts/
-│  ├─ server.mjs              # zero-dependency static dev server
-│  ├─ chrome.mjs              # headless Chrome/Edge locator + runner
-│  ├─ generate-pdf.mjs        # npm run pdf
-│  ├─ generate-avatar.mjs     # npm run avatar
-│  └─ generate-og.mjs         # npm run og
-├─ .github/workflows/deploy.yml
-├─ robots.txt, sitemap.xml, .nojekyll, .gitignore
-├─ package.json                # scripts only — zero dependencies
-└─ README.md
-```
+| What to change | Where |
+|---------------|-------|
+| Accent colours | `assets/css/styles.css` → CSS custom properties per `[data-theme]` |
+| Fonts | Replace Google Fonts `<link>` in `index.html` + update `--font-sans`/`--font-mono` in CSS |
+| Section order | Reorder `<section>` elements in `index.html` |
+| Disable a section | Remove or comment out the `<section>` in `index.html` |
+| Animated background blobs | `.blob-1/2/3` in `styles.css` — adjust size, colour, animation |
+| Radar chart colours | `drawRadar()` in `assets/js/main.js` |
+| Skill level estimates | `skillGroups[].skills[].level` in `profile.json` (0–100) |
+| PDF page margins | `@page { margin: … }` in `assets/css/resume.css` |
+| PDF font size | `body { font-size: … }` in `resume.css` |
+| Disable motion | All animations respect `@media (prefers-reduced-motion: reduce)` automatically |
 
-## Notes
+---
 
-- `assets/js/main.js` includes a couple of harmless `?debug…` query-param hooks
-  (`debugFlat`, `debugScrollTo`, `debugOpenMenu`, `debugWidth`) used during development to
-  screenshot-test the site in headless Chrome. They do nothing unless you type those exact
-  query params into the URL yourself — safe to leave in, or strip out if you'd rather not
-  carry them.
-- Skill levels in `profile.json` were estimated from resume seniority/prominence — edit the
-  `level` values (0–100) in `skillGroups` to taste.
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Site shows "Open via dev server" error | Run `npm start` and open `http://127.0.0.1:5173` |
+| `npm run pdf` says Chrome not found | Set `$env:CHROME_PATH` to Chrome's full path |
+| GitHub section shows fallback | GitHub API rate-limits unauthenticated requests. Wait an hour or add your token |
+| Avatar looks like a sticker | Lower `RIM` to ≤ 0.18 and `TINT` to ≤ 0.06 in `avatar-template.html` |
+| PDF text not selectable | Ensure `resume.html` renders before printing — increase `--virtual-time-budget` |
+
+---
+
+*Built with vanilla HTML, CSS & JavaScript. Zero npm dependencies. Zero build step.*
