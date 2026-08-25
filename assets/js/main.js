@@ -592,7 +592,7 @@ function renderHero(p) {
   }
 
   // Floating chips
-  const chips = ['Java', 'Spring Boot', 'ReactJS', 'AWS', 'Kafka'];
+  const chips = ['Java', 'Spring Boot', 'AI Concepts', 'ReactJS', 'Kafka'];
   const chipsEl = document.getElementById('portrait-chips');
   if (chipsEl) chipsEl.innerHTML = chips.map(c => `<span class="portrait-chip">${esc(c)}</span>`).join('');
 
