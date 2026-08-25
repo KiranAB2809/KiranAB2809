@@ -2,7 +2,7 @@
   "meta": {
     "siteUrl": "https://kiranab2809.github.io/portfolio",
     "title": "Kiran AB — Tech Lead & Full-Stack Engineer",
-    "description": "Senior Tech Lead with 9+ years of full-stack expertise in Java Spring Boot, ReactJS, AWS and Kafka. Building scalable core banking and enterprise systems at ANZ.",
+    "description": "Senior Tech Lead with 10 years of full-stack expertise in Java Spring Boot, ReactJS, AWS and Kafka. Building scalable core banking and enterprise systems at ANZ.",
     "keywords": [
       "Kiran AB", "Tech Lead", "Full Stack Developer", "Java Spring Boot", "ReactJS",
       "AWS", "Kafka", "Bangalore", "ANZ", "Core Banking", "Microservices"
@@ -39,16 +39,16 @@
     ],
     "githubUsername": "KiranAB2809",
     "summary": [
-      "Accomplished Tech Lead with 9+ years of full-stack development experience, driving innovation in core banking and enterprise systems.",
-      "Strong command over Java Spring Boot, ReactJS, cloud technologies (AWS, Kafka), and modern DevOps practices.",
-      "Extensive hands-on experience in Agile methodologies and the SAFe framework.",
-      "Proven ability to lead high-performing teams while delivering scalable, production-grade applications.",
-      "Continuous learner with demonstrated expertise in emerging technologies and architectural best practices."
-    ]
+      "Software Engineer with 10 years of experience designing, developing and operating enterprise cloud-native applications across institutional banking and global automotive systems.", 
+      "Strong hands-on expertise in Java 17, Spring Boot, microservices, ReactJS, TypeScript, AWS, Kubernetes, Docker, OpenShift, Apache Kafka and PostgreSQL.",
+      "Proven record of owning end-to-end delivery across architecture, technical design, development, testing, code reviews, CI/CD, production support and engineering mentorship."," Experienced in modernizing legacy platforms, designing distributed and event-driven systems, optimizing application performance and integrating heterogeneous enterprise systems.",
+      "Strong foundation in Generative AI and modern AI application concepts, including LLM application patterns, AI-agent architectures, structured prompting, context management, RAG, embeddings, vector search and Model Context Protocol (MCP), with a strong interest in applying these capabilities to secure, scalable enterprise software platforms."
+    ],
+    "otherSkills":[]
   },
 
   "stats": [
-    { "value": 9, "suffix": "+", "label": "Years of Experience" },
+    { "value": 10, "suffix": "", "label": "Years of Experience" },
     { "value": 3, "suffix": "", "label": "Major Projects Delivered" },
     { "value": 40, "suffix": "%", "label": "Response Time Improvement" },
     { "value": 2, "suffix": "", "label": "Hackathon Awards" }
@@ -175,14 +175,26 @@
       ]
     },
     {
+      "name": "AI/Generative AI",
+      "icon": "users",
+      "skills": [
+        { "name": "Generative AI Concepts", "level": 80 },
+        { "name": "LLM Application Patterns", "level": 60 },
+        { "name": "AI Agent Concepts", "level": 80 },
+        { "name": "RAG Concepts", "level": 80 },
+        { "name": "AI Assisted Software Engineer", "level": 80 },
+        { "name": "Structured Prompting", "level": 85 }
+      ]
+    },
+    {
       "name": "Frontend",
       "icon": "monitor",
       "skills": [
-        { "name": "ReactJS", "level": 88 },
-        { "name": "JavaScript (ES6+)", "level": 85 },
-        { "name": "TypeScript", "level": 80 },
-        { "name": "Angular", "level": 75 },
-        { "name": "HTML & CSS", "level": 85 }
+        { "name": "ReactJS", "level": 70 },
+        { "name": "JavaScript (ES6+)", "level": 70 },
+        { "name": "TypeScript", "level": 70 },
+        { "name": "Angular", "level": 50 },
+        { "name": "HTML & CSS", "level": 80 }
       ]
     },
     {
@@ -211,6 +223,9 @@
 
   "skillTags": [
     "Java", "Spring Boot", "ReactJS", "Angular", "TypeScript", "JavaScript",
+    "Generative AI Concepts", "LLM Application Patterns", "AI Agent Concepts", 
+    "Structured Prompting", "RAG Concepts", "Embeddings & Vector Search Concepts", 
+    "MCP Concepts", "AI-Assisted Software Engineering",
     "AWS", "Kafka", "Docker", "OpenShift", "PostgreSQL", "Microservices",
     "REST APIs", "CI/CD", "Jenkins", "Git", "SAFe", "Agile", "Scrum",
     "JPA", "Hibernate", "Event-Driven Architecture", "Core Banking", "Tech Lead"
